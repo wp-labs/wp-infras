@@ -391,7 +391,7 @@ dependencies = [
  "serde-value",
  "serde_json",
  "serde_yaml",
- "thiserror 2.0.17",
+ "thiserror",
  "thread-id",
  "typemap-ors",
  "unicode-segmentation",
@@ -454,7 +454,7 @@ dependencies = [
  "derive_more",
  "log",
  "serde",
- "thiserror 2.0.17",
+ "thiserror",
 ]
 
 [[package]]
@@ -469,7 +469,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_yaml",
- "thiserror 2.0.17",
+ "thiserror",
  "toml 0.9.8",
 ]
 
@@ -765,31 +765,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
-dependencies = [
- "thiserror-impl 1.0.69",
-]
-
-[[package]]
-name = "thiserror"
 version = "2.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f63587ca0f12b72a0600bcba1d40081f830876000bb46dd2337a3051618f4fc8"
 dependencies = [
- "thiserror-impl 2.0.17",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "thiserror-impl",
 ]
 
 [[package]]
@@ -1151,9 +1131,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winnow"
-version = "0.7.13"
+version = "0.7.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21a0236b59786fed61e2a80582dd500fe61f18b5dca67a4a067d0bc9039339cf"
+checksum = "5a5364e9d77fcdeeaa6062ced926ee3381faa2ee02d3eb83a5c27a8825540829"
 dependencies = [
  "memchr",
 ]
@@ -1191,7 +1171,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "thiserror 2.0.17",
+ "thiserror",
  "toml 0.9.8",
  "wp-model-core",
  "wp-parse-api",
@@ -1217,7 +1197,7 @@ dependencies = [
  "orion_conf",
  "serde",
  "serde_json",
- "thiserror 2.0.17",
+ "thiserror",
  "unicode-segmentation",
  "wp-connector-api",
  "wp-log",
@@ -1247,7 +1227,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "smallvec",
- "thiserror 2.0.17",
+ "thiserror",
  "wildmatch",
 ]
 
@@ -1261,7 +1241,7 @@ dependencies = [
  "orion-error",
  "serde",
  "serde_derive",
- "thiserror 2.0.17",
+ "thiserror",
  "wp-model-core",
 ]
 
