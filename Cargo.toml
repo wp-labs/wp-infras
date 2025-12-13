@@ -18,7 +18,7 @@ license = "Apache-2.0"
 # Crates shared across members; versions can be centrally managed here.
 # Update these as needed.
 log = "~0.4"
-toml = "~0.8"
+toml = "~0.9"
 orion-error = "0.5.5"
 orion_conf =  { version = "~0.3", features = ["yaml","toml"]}
 winnow = "~0.7"
