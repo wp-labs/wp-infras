@@ -1,0 +1,24 @@
+[package]
+name = "wp-error"
+edition.workspace = true
+version.workspace = true
+
+[lib]
+name = "wp_err"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+orion-error = { workspace = true }
+orion_conf = { workspace = true }
+derive_more = { workspace = true }
+
+wp_log = { package = "wp-log", path = "../wp-log" }
+unicode-segmentation = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+#wp_parse_api = { workspace = true }
+wp_connector_api = { workspace = true }

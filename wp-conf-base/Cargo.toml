@@ -1,0 +1,18 @@
+[package]
+name = "wp-conf-base"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "wp_conf_base"
+
+[dependencies]
+serde = { workspace = true }
+anyhow = { workspace = true }
+toml = { workspace = true }
+log = { workspace = true }
+orion_conf = { workspace = true }
+wp_model_core ={ workspace = true }
+derive_more = { workspace = true }
+

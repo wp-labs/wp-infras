@@ -1,0 +1,22 @@
+[package]
+name = "wp-log"
+edition.workspace = true
+version.workspace = true
+
+[lib]
+name = "wp_log"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+strum_macros = { workspace = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
+log = { workspace = true }
+log4rs = { workspace = true }
+getset = { workspace = true }
+orion_conf =  { workspace = true }
+
+[features]
+default = ["std"]
+std = []

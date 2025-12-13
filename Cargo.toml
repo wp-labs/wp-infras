@@ -1,0 +1,38 @@
+[workspace]
+members = [
+    "wp-error",
+    "wp-log",
+    "wp-specs",
+    "wp-conf-base",
+    "wp-data-fmt",
+]
+resolver = "2"
+
+[workspace.package]
+# Shared package metadata inherited by members via `*.workspace = true`
+version = "0.5.8"
+edition = "2024"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+# Crates shared across members; versions can be centrally managed here.
+# Update these as needed.
+log = "~0.4"
+toml = "~0.8"
+orion-error = "0.5.5"
+orion_conf =  { version = "~0.3", features = ["yaml","toml"]}
+winnow = "~0.7"
+derive_more = "2.1"
+wp_connector_api = { package = "wp-connector-api",  git = "https://github.com/wp-labs//wp-open-api",tag = "v0.5.0-beta" }
+wp_model_core    = { package = "wp-model-core",     git = "https://github.com/wp-labs//wp-open-api",tag = "v0.5.0-beta" }
+
+unicode-segmentation = "~1.11"
+serde = { version = "~1.0", features = ["derive"] }
+thiserror = "~1.0"
+serde_json = "~1.0"
+chrono = { version = "~0.4", features = ["serde"] }
+strum_macros = "~0.25"
+anyhow = "~1.0"
+log4rs = { version = "~1.2", features = ["gzip"] }
+getset = "~0.1"
+wildmatch = "~2.6"
