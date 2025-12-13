@@ -1,8 +1,8 @@
 use chrono::NaiveDateTime;
 use std::net::{IpAddr, Ipv4Addr};
 use wp_data_fmt::{DataFormat, Raw};
-use wp_model_core::model::{DataField, DataRecord};
 use wp_model_core::model::types::value::ObjectValue;
+use wp_model_core::model::{DataField, DataRecord};
 
 // 生成 Raw 文本的快照测试，参考 nginx_proto_txt_snapshot.rs
 // 关注点：
@@ -21,7 +21,10 @@ fn nginx_access_log_raw_snapshot() {
             DataField::from_digit("http/status", 200),
             DataField::from_digit("length", 368),
             DataField::from_chars("chars", "http://119.122.1.4/"),
-            DataField::from_chars("http/agent", "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 "),
+            DataField::from_chars(
+                "http/agent",
+                "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 ",
+            ),
             DataField::from_chars("src_key", "_"),
         ],
     };

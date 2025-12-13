@@ -1,6 +1,6 @@
 use crate::formatter::DataFormat;
 use wp_model_core::model::fmt_def::TextFmt;
-use wp_model_core::model::{types::value::ObjectValue, DataField, DataRecord, DataType, Value};
+use wp_model_core::model::{DataField, DataRecord, DataType, Value, types::value::ObjectValue};
 
 pub struct SqlInsert {
     pub table_name: String,

@@ -28,7 +28,10 @@ impl FromStr for Protocol {
         match s {
             "tcp" => Ok(Protocol::TCP),
             "udp" => Ok(Protocol::UDP),
-            _ => Err(anyhow::anyhow!("Unsupported protocol '{}' for syslog server. Supported protocols are: tcp, udp", s)),
+            _ => Err(anyhow::anyhow!(
+                "Unsupported protocol '{}' for syslog server. Supported protocols are: tcp, udp",
+                s
+            )),
         }
     }
 }

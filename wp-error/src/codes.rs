@@ -11,9 +11,9 @@ pub trait SysErrorCode {
 use wp_connector_api::{SinkReason, SourceReason};
 
 // ----------------- Config -----------------
+use crate::KnowledgeReason;
 use crate::config_error::{ConfCore, ConfDynamic, ConfFeature, ConfReason};
 use crate::parse_error::{DataErrKind, OMLCodeReason};
-use crate::KnowledgeReason;
 
 impl SysErrorCode for ConfReason<ConfCore> {
     fn sys_code(&self) -> u16 {

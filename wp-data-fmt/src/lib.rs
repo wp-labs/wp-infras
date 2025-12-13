@@ -33,9 +33,9 @@ impl From<&TextFmt> for FormatType {
             TextFmt::Csv => FormatType::Csv(Csv::default()),
             TextFmt::Kv => FormatType::Kv(KeyValue::default()),
             TextFmt::Raw => FormatType::Raw(Raw),
-            TextFmt::ProtoText => FormatType::ProtoText(ProtoTxt::default()),
+            TextFmt::ProtoText => FormatType::ProtoText(ProtoTxt),
             TextFmt::Show => FormatType::Raw(Raw),
-            TextFmt::Proto => FormatType::ProtoText(ProtoTxt::default()),
+            TextFmt::Proto => FormatType::ProtoText(ProtoTxt),
         }
     }
 }
@@ -53,7 +53,7 @@ impl From<&TextFmt> for SqlFormat {
             TextFmt::Json => SqlFormat::Json(Json),
             TextFmt::Kv => SqlFormat::Kv(KeyValue::default()),
             TextFmt::Raw => SqlFormat::Raw(Raw),
-            TextFmt::ProtoText => SqlFormat::ProtoText(ProtoTxt::default()),
+            TextFmt::ProtoText => SqlFormat::ProtoText(ProtoTxt),
             _ => SqlFormat::Raw(Raw),
         }
     }

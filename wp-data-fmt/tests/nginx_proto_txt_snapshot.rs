@@ -21,7 +21,10 @@ fn nginx_access_log_proto_text_snapshot() {
             DataField::from_digit("http/status", 200),
             DataField::from_digit("length", 368),
             DataField::from_chars("chars", "http://119.122.1.4/"),
-            DataField::from_chars("http/agent", "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 "),
+            DataField::from_chars(
+                "http/agent",
+                "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 ",
+            ),
             DataField::from_chars("src_key", "_"),
         ],
     };

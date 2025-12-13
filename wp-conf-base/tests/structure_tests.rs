@@ -1,8 +1,8 @@
+use orion_conf::error::{ConfIOReason, StructError};
 use serde::Deserialize;
 use std::str::FromStr;
-use orion_conf::error::{ConfIOReason, StructError};
-use wp_conf_base::{de_bool_onoff, Protocol, TagParse, Validate, GetTagStr};
 use wp_conf_base::structure::ConfStdOperation;
+use wp_conf_base::{GetTagStr, Protocol, TagParse, Validate, de_bool_onoff};
 
 #[test]
 fn test_protocol_from_str() {
@@ -17,7 +17,12 @@ fn test_protocol_from_str() {
     // Test invalid protocol
     let result = Protocol::from_str("http");
     assert!(result.is_err());
-    assert!(result.unwrap_err().to_string().contains("Unsupported protocol"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("Unsupported protocol")
+    );
 }
 
 #[test]
@@ -25,7 +30,6 @@ fn test_protocol_display() {
     assert_eq!(format!("{}", Protocol::TCP), "tcp");
     assert_eq!(format!("{}", Protocol::UDP), "udp");
 }
-
 
 #[test]
 fn test_tag_parse() {
@@ -142,11 +146,10 @@ fn test_conf_std_operation_try_load() {
                 "ok" => Ok(FileBackedConf {
                     marker: "ok".to_string(),
                 }),
-                other => StructError::from(ConfIOReason::Other(format!(
-                    "invalid content: {}",
-                    other
-                )))
-                .err(),
+                other => {
+                    StructError::from(ConfIOReason::Other(format!("invalid content: {}", other)))
+                        .err()
+                }
             }
         }
 

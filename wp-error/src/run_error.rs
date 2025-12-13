@@ -1,5 +1,5 @@
 use crate::parse_error::OMLCodeReason;
-use crate::{config_error::ConfCore, ConfReason};
+use crate::{ConfReason, config_error::ConfCore};
 use derive_more::From;
 use orion_error::{ConfErrReason, ErrorCode, StructError, UvsConfFrom, UvsReason};
 use serde::Serialize;

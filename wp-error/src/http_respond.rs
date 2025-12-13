@@ -1,6 +1,6 @@
 //! Helpers to build consistent error responses (JSON/text) without
 //! coupling to any specific web framework.
-use crate::{http_status_for_reason, SysErrorCode};
+use crate::{SysErrorCode, http_status_for_reason};
 use serde::Serialize;
 use std::fmt::Display;
 

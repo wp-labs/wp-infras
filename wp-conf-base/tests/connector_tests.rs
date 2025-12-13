@@ -13,12 +13,24 @@ impl ConnectorKindAdapter for TestAdapter {
     fn defaults(&self) -> toml::value::Table {
         let mut table = toml::value::Table::new();
         if self.kind_name == "mysql" {
-            table.insert("host".to_string(), toml::Value::String("localhost".to_string()));
+            table.insert(
+                "host".to_string(),
+                toml::Value::String("localhost".to_string()),
+            );
             table.insert("port".to_string(), toml::Value::Integer(3306));
-            table.insert("username".to_string(), toml::Value::String("root".to_string()));
+            table.insert(
+                "username".to_string(),
+                toml::Value::String("root".to_string()),
+            );
         } else if self.kind_name == "file" {
-            table.insert("path".to_string(), toml::Value::String("/var/log/app.log".to_string()));
-            table.insert("rotation".to_string(), toml::Value::String("daily".to_string()));
+            table.insert(
+                "path".to_string(),
+                toml::Value::String("/var/log/app.log".to_string()),
+            );
+            table.insert(
+                "rotation".to_string(),
+                toml::Value::String("daily".to_string()),
+            );
         }
         table
     }
@@ -35,18 +47,36 @@ impl ConnectorKindAdapter for TestAdapter {
                         let host_db = parts[1];
 
                         if let Some((username, password)) = auth.split_once(':') {
-                            table.insert("username".to_string(), toml::Value::String(username.to_string()));
-                            table.insert("password".to_string(), toml::Value::String(password.to_string()));
+                            table.insert(
+                                "username".to_string(),
+                                toml::Value::String(username.to_string()),
+                            );
+                            table.insert(
+                                "password".to_string(),
+                                toml::Value::String(password.to_string()),
+                            );
                         }
 
                         if let Some((host, db)) = host_db.split_once('/') {
                             if let Some((host, port)) = host.split_once(':') {
-                                table.insert("host".to_string(), toml::Value::String(host.to_string()));
-                                table.insert("port".to_string(), toml::Value::Integer(port.parse().unwrap_or(3306)));
+                                table.insert(
+                                    "host".to_string(),
+                                    toml::Value::String(host.to_string()),
+                                );
+                                table.insert(
+                                    "port".to_string(),
+                                    toml::Value::Integer(port.parse().unwrap_or(3306)),
+                                );
                             } else {
-                                table.insert("host".to_string(), toml::Value::String(host.to_string()));
+                                table.insert(
+                                    "host".to_string(),
+                                    toml::Value::String(host.to_string()),
+                                );
                             }
-                            table.insert("database".to_string(), toml::Value::String(db.to_string()));
+                            table.insert(
+                                "database".to_string(),
+                                toml::Value::String(db.to_string()),
+                            );
                         }
                     }
                 }
@@ -89,7 +119,10 @@ fn test_connector_defaults() {
     let file_adapter = TestAdapter { kind_name: "file" };
     let defaults = file_adapter.defaults();
 
-    assert_eq!(defaults.get("path").unwrap().as_str(), Some("/var/log/app.log"));
+    assert_eq!(
+        defaults.get("path").unwrap().as_str(),
+        Some("/var/log/app.log")
+    );
     assert_eq!(defaults.get("rotation").unwrap().as_str(), Some("daily"));
 }
 
@@ -98,7 +131,9 @@ fn test_connector_url_parsing() {
     let mysql_adapter = TestAdapter { kind_name: "mysql" };
 
     // Test valid MySQL URL
-    let params = mysql_adapter.url_to_params("mysql://user:pass@localhost:3306/mydb").unwrap();
+    let params = mysql_adapter
+        .url_to_params("mysql://user:pass@localhost:3306/mydb")
+        .unwrap();
     assert_eq!(params.get("username").unwrap().as_str(), Some("user"));
     assert_eq!(params.get("password").unwrap().as_str(), Some("pass"));
     assert_eq!(params.get("host").unwrap().as_str(), Some("localhost"));
@@ -131,6 +166,10 @@ fn test_connector_as_trait_object() {
     for adapter in adapters {
         let kind = adapter.kind();
         let defaults = adapter.defaults();
-        assert!(!defaults.is_empty(), "Adapter {} should have defaults", kind);
+        assert!(
+            !defaults.is_empty(),
+            "Adapter {} should have defaults",
+            kind
+        );
     }
 }

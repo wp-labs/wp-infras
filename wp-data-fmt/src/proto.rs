@@ -1,5 +1,5 @@
 use crate::formatter::DataFormat;
-use wp_model_core::model::{types::value::ObjectValue, DataField, DataRecord, DataType, Value};
+use wp_model_core::model::{DataField, DataRecord, DataType, Value, types::value::ObjectValue};
 
 #[derive(Default)]
 pub struct ProtoTxt;

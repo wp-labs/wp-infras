@@ -1,6 +1,6 @@
 use crate::formatter::StaticDataFormatter;
-use serde_json::{json, Value as JsonValue};
-use wp_model_core::model::{types::value::ObjectValue, DataField, DataRecord, DataType, Value};
+use serde_json::{Value as JsonValue, json};
+use wp_model_core::model::{DataField, DataRecord, DataType, Value, types::value::ObjectValue};
 
 #[derive(Debug, Default)]
 pub struct Json;

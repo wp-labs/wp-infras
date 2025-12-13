@@ -1,6 +1,6 @@
-pub mod structure;
 pub mod connector;
+pub mod structure;
 
 // Re-export types, traits, and functions for tests
-pub use structure::{Protocol, TagParse, Validate, GetTagStr, de_bool_onoff};
 pub use connector::ConnectorKindAdapter;
+pub use structure::{GetTagStr, Protocol, TagParse, Validate, de_bool_onoff};

@@ -1,6 +1,6 @@
 use crate::formatter::DataFormat;
 use std::fmt::Write;
-use wp_model_core::model::{types::value::ObjectValue, DataField, DataRecord, DataType};
+use wp_model_core::model::{DataField, DataRecord, DataType, types::value::ObjectValue};
 
 pub struct Csv {
     delimiter: char,

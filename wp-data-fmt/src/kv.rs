@@ -1,6 +1,6 @@
 use crate::formatter::DataFormat;
 use std::fmt::Write;
-use wp_model_core::model::{types::value::ObjectValue, DataField, DataRecord, DataType};
+use wp_model_core::model::{DataField, DataRecord, DataType, types::value::ObjectValue};
 
 pub struct KeyValue {
     pair_separator: String,
@@ -51,11 +51,7 @@ impl DataFormat for KeyValue {
         String::new()
     }
     fn format_bool(&self, v: &bool) -> String {
-        if *v {
-            "true".into()
-        } else {
-            "false".into()
-        }
+        if *v { "true".into() } else { "false".into() }
     }
     fn format_string(&self, v: &str) -> String {
         self.format_string_value(v)

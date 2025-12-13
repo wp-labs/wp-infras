@@ -276,11 +276,8 @@ fn parse_lv(s: &str) -> OrionConfResult<LevelFilter> {
         "info" => Ok(LevelFilter::Info),
         "debug" => Ok(LevelFilter::Debug),
         "trace" => Ok(LevelFilter::Trace),
-        _ => {
-            return ConfIOReason::Other("unknow log level".into())
-                .err_result()
-                .with(s);
-            //Err(anyhow!("未知日志级别: {}", s)),
-        }
+        _ => ConfIOReason::Other("unknow log level".into())
+            .err_result()
+            .with(s),
     }
 }

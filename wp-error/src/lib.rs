@@ -12,7 +12,7 @@ pub use codes::SysErrorCode;
 pub use config_error::*;
 pub use http_map::{http_status_for_reason, http_status_for_sys};
 pub use http_respond::{
-    build_error_response, error_response_json, error_response_text, ErrorResponse,
+    ErrorResponse, build_error_response, error_response_json, error_response_text,
 };
 pub use knowledge::*;
 pub use parse_error::*;
