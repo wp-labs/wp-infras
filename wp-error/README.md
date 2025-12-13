@@ -27,11 +27,11 @@
 
 | 模块 | 描述 |
 |------|------|
-| `config_error` | 配置相关错误类型和工具 |
+| `config_error` | 配置相关错误类型和工具；`ConfReason` 现已实现 `ErrorCode`，直接返回 SysErrorCode |
 | `parse_error` | 解析/OML相关错误类型 |
 | `source_error` | 数据源错误类型 |
 | `dist_error` | 分发/接收端错误类型 |
-| `run_error` | 运行时错误类型和转换 |
+| `run_error` | 运行时错误类型和转换，涵盖 `SourceFocus::Other/Disconnect` 等细粒度原因 |
 
 ### 错误处理
 
@@ -98,7 +98,7 @@ let 先前模式 = 切换系统健壮性模式(RobustnessMode::严格模式);
 
 ### 运行时错误 (`run_error`)
 
-- `RunError`: 综合数据源和接收端错误的通用运行时错误
+- `RunError`: 综合数据源和接收端错误的通用运行时错误；`RunReason` 会保留 `SourceReason` 的详细原因（如 `Other` 及 `Disconnect`）并透过 `SysErrorCode` 暴露 50209/49901 等码值
 
 ## 依赖项
 
