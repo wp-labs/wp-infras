@@ -28,7 +28,7 @@ wp_model_core    = { package = "wp-model-core",     git = "https://github.com/wp
 
 unicode-segmentation = "~1.11"
 serde = { version = "~1.0", features = ["derive"] }
-thiserror = "~1.0"
+thiserror = "~2.0"
 serde_json = "~1.0"
 chrono = { version = "~0.4", features = ["serde"] }
 strum_macros = "~0.25"
