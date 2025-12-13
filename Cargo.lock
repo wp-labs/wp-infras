@@ -1217,7 +1217,7 @@ dependencies = [
  "orion_conf",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.17",
  "unicode-segmentation",
  "wp-connector-api",
  "wp-log",
