@@ -20,7 +20,7 @@ license = "MIT OR Apache-2.0"
 log = "~0.4"
 toml = "~0.8"
 orion-error = "0.5.5"
-orion_conf =  { version = "~0.3", features = ["yaml","toml"]}
+orion_conf =  { version = "~0.3", features = ["toml"]}
 winnow = "~0.7"
 derive_more = "2.1"
 wp_connector_api = { package = "wp-connector-api",  git = "{{GIT_REPO_SVR}}/wp-open-api",tag = "{{OPEN_API_VER}}" }
