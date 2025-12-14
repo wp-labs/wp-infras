@@ -76,7 +76,8 @@ fn sql_batch_insert_snapshot() {
                 DataField::from_ip("ip", IpAddr::V4(Ipv4Addr::new(192, 168, 1, 2))),
                 DataField::from_time(
                     "time",
-                    NaiveDateTime::parse_from_str("2019-08-06 12:12:19", "%Y-%m-%d %H:%M:%S").unwrap(),
+                    NaiveDateTime::parse_from_str("2019-08-06 12:12:19", "%Y-%m-%d %H:%M:%S")
+                        .unwrap(),
                 ),
                 DataField::from_chars("http/request", "GET /nginx-logo.png HTTP/1.1"),
                 DataField::from_digit("http/status", 200),
@@ -91,7 +92,8 @@ fn sql_batch_insert_snapshot() {
                 DataField::from_ip("ip", IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1))),
                 DataField::from_time(
                     "time",
-                    NaiveDateTime::parse_from_str("2019-08-06 12:13:00", "%Y-%m-%d %H:%M:%S").unwrap(),
+                    NaiveDateTime::parse_from_str("2019-08-06 12:13:00", "%Y-%m-%d %H:%M:%S")
+                        .unwrap(),
                 ),
                 DataField::from_chars("http/request", "GET /health"),
                 DataField::from_digit("http/status", 200),
