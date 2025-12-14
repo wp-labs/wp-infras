@@ -1092,7 +1092,7 @@ checksum = "f17a85883d4e6d00e8a97c586de764dabcc06133f7f1d55dce5cdc070ad7fe59"
 
 [[package]]
 name = "wp-conf-base"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "anyhow",
  "derive_more",
@@ -1125,7 +1125,7 @@ dependencies = [
 
 [[package]]
 name = "wp-data-fmt"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "chrono",
  "serde",
@@ -1135,7 +1135,7 @@ dependencies = [
 
 [[package]]
 name = "wp-error"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "chrono",
  "derive_more",
@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "wp-log"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "anyhow",
  "getset",
@@ -1193,7 +1193,7 @@ dependencies = [
 
 [[package]]
 name = "wp-specs"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "serde",
  "toml",
