@@ -67,3 +67,73 @@ fn sql_upsert_quotes_conflict_columns() {
         sql.contains("ON CONFLICT (\"http/request\") DO UPDATE SET \"user\" = EXCLUDED.\"user\";")
     );
 }
+
+#[test]
+fn sql_batch_insert_snapshot() {
+    let records = vec![
+        DataRecord {
+            items: vec![
+                DataField::from_ip("ip", IpAddr::V4(Ipv4Addr::new(192, 168, 1, 2))),
+                DataField::from_time(
+                    "time",
+                    NaiveDateTime::parse_from_str("2019-08-06 12:12:19", "%Y-%m-%d %H:%M:%S").unwrap(),
+                ),
+                DataField::from_chars("http/request", "GET /nginx-logo.png HTTP/1.1"),
+                DataField::from_digit("http/status", 200),
+                DataField::from_digit("length", 368),
+                DataField::from_chars("chars", "http://119.122.1.4/"),
+                DataField::from_chars("http/agent", "Mozilla/5.0"),
+                DataField::from_chars("src_key", "_"),
+            ],
+        },
+        DataRecord {
+            items: vec![
+                DataField::from_ip("ip", IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1))),
+                DataField::from_time(
+                    "time",
+                    NaiveDateTime::parse_from_str("2019-08-06 12:13:00", "%Y-%m-%d %H:%M:%S").unwrap(),
+                ),
+                DataField::from_chars("http/request", "GET /health"),
+                DataField::from_digit("http/status", 200),
+                DataField::from_digit("length", 0),
+                DataField::from_chars("chars", ""),
+                DataField::from_chars("http/agent", "curl/7.64"),
+                DataField::from_chars("src_key", "test"),
+            ],
+        },
+    ];
+
+    let sql = SqlInsert::new_with_json("nginx_access").format_batch(&records);
+    let expected = r#"INSERT INTO "nginx_access" ("ip", "time", "http/request", "http/status", "length", "chars", "http/agent", "src_key") VALUES
+  ('192.168.1.2', '2019-08-06 12:12:19', 'GET /nginx-logo.png HTTP/1.1', 200, 368, 'http://119.122.1.4/', 'Mozilla/5.0', '_'),
+  ('10.0.0.1', '2019-08-06 12:13:00', 'GET /health', 200, 0, '', 'curl/7.64', 'test');"#;
+    assert_eq!(sql, expected);
+}
+
+#[test]
+fn sql_generate_create_table_snapshot() {
+    let record = DataRecord {
+        items: vec![
+            DataField::from_ip("ip", IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1))),
+            DataField::from_time(
+                "time",
+                NaiveDateTime::parse_from_str("2019-08-06 12:13:00", "%Y-%m-%d %H:%M:%S").unwrap(),
+            ),
+            DataField::from_chars("http/request", "GET /health"),
+            DataField::from_digit("http/status", 200),
+            DataField::from_digit("length", 0),
+            DataField::from_chars("http/agent", "curl/7.64"),
+        ],
+    };
+
+    let ddl = SqlInsert::new_with_json("nginx_access").generate_create_table(&[record]);
+    let expected = r#"CREATE TABLE IF NOT EXISTS "nginx_access" (
+  "ip" INET,
+  "time" TIMESTAMP,
+  "http/request" TEXT,
+  "http/status" BIGINT,
+  "length" BIGINT,
+  "http/agent" TEXT
+);"#;
+    assert_eq!(ddl, expected);
+}
