@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/wp-labs/wp-infras/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/wp-labs/wp-infras/graph/badge.svg?token=6SVCXBHB6B)](https://codecov.io/gh/wp-labs/wp-infras)
-![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
+![License](https://img.shields.io/badge/license-Elastic%20License%202.0-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-stable%2Bbeta-orange.svg)
 
 ## Workspace Overview
@@ -26,6 +26,18 @@
    - Update relevant docs (`README.md`, `CODES.md`, etc.) to keep contracts in sync.
    - Open a PR for review once everything is green.
 
+## License
+
+This project is licensed under the Elastic License 2.0. See the [LICENSE](LICENSE) file for details.
+
+**Important restrictions of the Elastic License 2.0:**
+
+- You may not provide the software to third parties as a hosted or managed service
+- You may not move, change, disable, or circumvent the license key functionality
+- You may not alter, remove, or obscure any licensing, copyright, or other notices
+
+For the full license text, please visit: https://www.elastic.co/licensing/elastic-license
+
 ## Contributing
 
-Issues and PRs are welcome. Check each crate’s README for in-depth usage. When adding new error codes, formats, or config traits, remember to update the docs and add test coverage.
+Issues and PRs are welcome. Check each crate's README for in-depth usage. When adding new error codes, formats, or config traits, remember to update the docs and add test coverage.
