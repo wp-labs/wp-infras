@@ -1,4 +1,6 @@
+use serde_json::json;
 use wp_conf_base::connector::ConnectorKindAdapter;
+use wp_connector_api::ParamMap;
 use wp_model_core::model::fmt_def::TextFmt;
 
 struct TestAdapter {
@@ -10,35 +12,23 @@ impl ConnectorKindAdapter for TestAdapter {
         self.kind_name
     }
 
-    fn defaults(&self) -> toml::value::Table {
-        let mut table = toml::value::Table::new();
+    fn defaults(&self) -> ParamMap {
+        let mut table = ParamMap::new();
         if self.kind_name == "mysql" {
-            table.insert(
-                "host".to_string(),
-                toml::Value::String("localhost".to_string()),
-            );
-            table.insert("port".to_string(), toml::Value::Integer(3306));
-            table.insert(
-                "username".to_string(),
-                toml::Value::String("root".to_string()),
-            );
+            table.insert("host".to_string(), json!("localhost"));
+            table.insert("port".to_string(), json!(3306));
+            table.insert("username".to_string(), json!("root"));
         } else if self.kind_name == "file" {
-            table.insert(
-                "path".to_string(),
-                toml::Value::String("/var/log/app.log".to_string()),
-            );
-            table.insert(
-                "rotation".to_string(),
-                toml::Value::String("daily".to_string()),
-            );
+            table.insert("path".to_string(), json!("/var/log/app.log"));
+            table.insert("rotation".to_string(), json!("daily"));
         }
         table
     }
 
-    fn url_to_params(&self, url: &str) -> anyhow::Result<toml::value::Table> {
+    fn url_to_params(&self, url: &str) -> anyhow::Result<ParamMap> {
         if self.kind_name == "mysql" {
             if let Some(url) = url.strip_prefix("mysql://") {
-                let mut table = toml::value::Table::new();
+                let mut table = ParamMap::new();
                 // Simple URL parsing for demonstration
                 if url.contains('@') {
                     let parts: Vec<&str> = url.split('@').collect();
@@ -47,36 +37,21 @@ impl ConnectorKindAdapter for TestAdapter {
                         let host_db = parts[1];
 
                         if let Some((username, password)) = auth.split_once(':') {
-                            table.insert(
-                                "username".to_string(),
-                                toml::Value::String(username.to_string()),
-                            );
-                            table.insert(
-                                "password".to_string(),
-                                toml::Value::String(password.to_string()),
-                            );
+                            table.insert("username".to_string(), json!(username));
+                            table.insert("password".to_string(), json!(password));
                         }
 
                         if let Some((host, db)) = host_db.split_once('/') {
                             if let Some((host, port)) = host.split_once(':') {
-                                table.insert(
-                                    "host".to_string(),
-                                    toml::Value::String(host.to_string()),
-                                );
+                                table.insert("host".to_string(), json!(host));
                                 table.insert(
                                     "port".to_string(),
-                                    toml::Value::Integer(port.parse().unwrap_or(3306)),
+                                    json!(port.parse::<u16>().unwrap_or(3306)),
                                 );
                             } else {
-                                table.insert(
-                                    "host".to_string(),
-                                    toml::Value::String(host.to_string()),
-                                );
+                                table.insert("host".to_string(), json!(host));
                             }
-                            table.insert(
-                                "database".to_string(),
-                                toml::Value::String(db.to_string()),
-                            );
+                            table.insert("database".to_string(), json!(db));
                         }
                     }
                 }
@@ -85,7 +60,7 @@ impl ConnectorKindAdapter for TestAdapter {
                 Err(anyhow::anyhow!("Invalid MySQL URL format"))
             }
         } else {
-            Ok(toml::value::Table::new())
+            Ok(ParamMap::new())
         }
     }
 
@@ -113,7 +88,7 @@ fn test_connector_defaults() {
     let defaults = mysql_adapter.defaults();
 
     assert_eq!(defaults.get("host").unwrap().as_str(), Some("localhost"));
-    assert_eq!(defaults.get("port").unwrap().as_integer(), Some(3306));
+    assert_eq!(defaults.get("port").unwrap().as_i64(), Some(3306));
     assert_eq!(defaults.get("username").unwrap().as_str(), Some("root"));
 
     let file_adapter = TestAdapter { kind_name: "file" };
@@ -137,7 +112,7 @@ fn test_connector_url_parsing() {
     assert_eq!(params.get("username").unwrap().as_str(), Some("user"));
     assert_eq!(params.get("password").unwrap().as_str(), Some("pass"));
     assert_eq!(params.get("host").unwrap().as_str(), Some("localhost"));
-    assert_eq!(params.get("port").unwrap().as_integer(), Some(3306));
+    assert_eq!(params.get("port").unwrap().as_i64(), Some(3306));
     assert_eq!(params.get("database").unwrap().as_str(), Some("mydb"));
 
     // Test invalid URL

@@ -12,13 +12,14 @@ resolver = "2"
 # Shared package metadata inherited by members via `*.workspace = true`
 version = "{{VERSION}}"
 edition = "2024"
-license = "MIT OR Apache-2.0"
+license = "Elv2"
+authors = ["WarpParse Dev Team"]
 
 [workspace.dependencies]
 # Crates shared across members; versions can be centrally managed here.
 # Update these as needed.
 log = "~0.4"
-toml = "~0.8"
+toml = "~0.9"
 orion-error = "0.5.5"
 orion_conf =  { version = "~0.3", features = ["toml"]}
 winnow = "~0.7"
@@ -26,12 +27,12 @@ derive_more = "2.1"
 wp_connector_api = { package = "wp-connector-api",  git = "{{GIT_REPO_SVR}}/wp-open-api",tag = "{{OPEN_API_VER}}" }
 wp_model_core    = { package = "wp-model-core",     git = "{{GIT_REPO_SVR}}/wp-open-api",tag = "{{OPEN_API_VER}}" }
 
-unicode-segmentation = "~1.11"
+unicode-segmentation = "~1.12"
 serde = { version = "~1.0", features = ["derive"] }
-thiserror = "~1.0"
+thiserror = "~2.0"
 serde_json = "~1.0"
 chrono = { version = "~0.4", features = ["serde"] }
-strum_macros = "~0.25"
+strum_macros = "~0.27"
 anyhow = "~1.0"
 log4rs = { version = "~1.4", features = ["gzip"] }
 getset = "~0.1"

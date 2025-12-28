@@ -8,7 +8,7 @@ pub struct CoreSinkSpec {
     #[serde(rename = "type")]
     pub kind: String,
     #[serde(default)]
-    pub params: toml::value::Table,
+    pub params: ParamMap,
     #[serde(default)]
     pub filter: Option<String>,
     #[serde(default)]
@@ -23,7 +23,7 @@ pub struct CoreSourceSpec {
     #[serde(rename = "type")]
     pub kind: String,
     #[serde(default)]
-    pub params: toml::value::Table,
+    pub params: ParamMap,
     #[serde(default)]
     pub tags: Vec<String>,
 }
@@ -33,3 +33,4 @@ pub mod pattern;
 
 // Re-export commonly used types at crate root for convenience
 pub use pattern::WildArray;
+use wp_connector_api::ParamMap;

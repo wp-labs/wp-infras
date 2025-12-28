@@ -15,4 +15,5 @@ log = { workspace = true }
 orion_conf = { workspace = true }
 wp_model_core ={ workspace = true }
 derive_more = { workspace = true }
-
+wp_connector_api = { workspace = true}
+serde_json = { workspace = true }

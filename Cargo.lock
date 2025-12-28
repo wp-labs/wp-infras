@@ -1091,21 +1091,23 @@ checksum = "f17a85883d4e6d00e8a97c586de764dabcc06133f7f1d55dce5cdc070ad7fe59"
 
 [[package]]
 name = "wp-conf-base"
-version = "0.5.10"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "derive_more",
  "log",
  "orion_conf",
  "serde",
+ "serde_json",
  "toml",
+ "wp-connector-api",
  "wp-model-core",
 ]
 
 [[package]]
 name = "wp-connector-api"
-version = "0.5.1"
-source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.5.1-beta#2103cf372a8451a26c5f1c07584e0c5abb884250"
+version = "0.6.0"
+source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.6.0-alpha#3e3ad1b4fe01a70cb65368a5ee55e657c35e9ab4"
 dependencies = [
  "anyhow",
  "async-broadcast",
@@ -1124,7 +1126,7 @@ dependencies = [
 
 [[package]]
 name = "wp-data-fmt"
-version = "0.5.10"
+version = "0.6.0"
 dependencies = [
  "chrono",
  "serde",
@@ -1134,7 +1136,7 @@ dependencies = [
 
 [[package]]
 name = "wp-error"
-version = "0.5.10"
+version = "0.6.0"
 dependencies = [
  "chrono",
  "derive_more",
@@ -1150,7 +1152,7 @@ dependencies = [
 
 [[package]]
 name = "wp-log"
-version = "0.5.10"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "getset",
@@ -1163,8 +1165,8 @@ dependencies = [
 
 [[package]]
 name = "wp-model-core"
-version = "0.5.1"
-source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.5.1-beta#2103cf372a8451a26c5f1c07584e0c5abb884250"
+version = "0.6.0"
+source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.6.0-alpha#3e3ad1b4fe01a70cb65368a5ee55e657c35e9ab4"
 dependencies = [
  "chrono",
  "ipnet",
@@ -1178,8 +1180,8 @@ dependencies = [
 
 [[package]]
 name = "wp-parse-api"
-version = "0.5.1"
-source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.5.1-beta#2103cf372a8451a26c5f1c07584e0c5abb884250"
+version = "0.6.0"
+source = "git+https://github.com/wp-labs/wp-open-api?tag=v0.6.0-alpha#3e3ad1b4fe01a70cb65368a5ee55e657c35e9ab4"
 dependencies = [
  "bytes",
  "derive_more",
@@ -1192,11 +1194,12 @@ dependencies = [
 
 [[package]]
 name = "wp-specs"
-version = "0.5.10"
+version = "0.6.0"
 dependencies = [
  "serde",
  "toml",
  "wildmatch",
+ "wp-connector-api",
 ]
 
 [[package]]
