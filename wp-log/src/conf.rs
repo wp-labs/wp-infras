@@ -281,3 +281,272 @@ fn parse_lv(s: &str) -> OrionConfResult<LevelFilter> {
             .with(s),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_output_display() {
+        assert_eq!(Output::Console.to_string(), "Console");
+        assert_eq!(Output::File.to_string(), "File");
+        assert_eq!(Output::Both.to_string(), "Both");
+    }
+
+    #[test]
+    fn test_output_serde() {
+        let console: Output = serde_json::from_str(r#""Console""#).unwrap();
+        assert_eq!(console, Output::Console);
+
+        let file: Output = serde_json::from_str(r#""File""#).unwrap();
+        assert_eq!(file, Output::File);
+
+        let both: Output = serde_json::from_str(r#""Both""#).unwrap();
+        assert_eq!(both, Output::Both);
+
+        assert_eq!(
+            serde_json::to_string(&Output::Console).unwrap(),
+            r#""Console""#
+        );
+        assert_eq!(serde_json::to_string(&Output::File).unwrap(), r#""File""#);
+        assert_eq!(serde_json::to_string(&Output::Both).unwrap(), r#""Both""#);
+    }
+
+    #[test]
+    fn test_log_conf_default() {
+        let conf = LogConf::default();
+        assert!(conf.level.contains("warn"));
+        assert!(conf.level.contains("ctrl=info"));
+        assert!(conf.level.contains("launch=info"));
+        assert_eq!(conf.output, Output::File);
+        assert!(conf.file.is_some());
+        assert_eq!(conf.file.as_ref().unwrap().path, "./data/logs/");
+        assert!(conf.levels.is_none());
+    }
+
+    #[test]
+    fn test_log_conf_from_str() {
+        let conf: LogConf = "debug".parse().unwrap();
+        assert_eq!(conf.level, "debug");
+        assert_eq!(conf.output, Output::File);
+        assert!(conf.file.is_some());
+        assert_eq!(conf.file.as_ref().unwrap().path, "./logs");
+        assert!(conf.levels.is_none());
+    }
+
+    #[test]
+    fn test_log_conf_log_to_console() {
+        let conf = LogConf::log_to_console("info");
+        assert_eq!(conf.level, "info");
+        assert_eq!(conf.output, Output::Console);
+        assert!(conf.file.is_none());
+        assert!(conf.levels.is_none());
+    }
+
+    #[test]
+    fn test_log_conf_display_without_levels() {
+        let conf = LogConf {
+            level: "debug".into(),
+            levels: None,
+            output: Output::Console,
+            file: Some(FileLogConf {
+                path: "/tmp/logs".into(),
+            }),
+            _deprecated_output_path: None,
+        };
+        let display = conf.to_string();
+        assert!(display.contains("level: debug"));
+        assert!(display.contains("output: Console"));
+        assert!(display.contains("/tmp/logs"));
+    }
+
+    #[test]
+    fn test_log_conf_display_with_levels() {
+        let mut levels = BTreeMap::new();
+        levels.insert("global".into(), "warn".into());
+        levels.insert("ctrl".into(), "info".into());
+
+        let conf = LogConf {
+            level: "warn".into(),
+            levels: Some(levels),
+            output: Output::File,
+            file: None,
+            _deprecated_output_path: None,
+        };
+        let display = conf.to_string();
+        assert!(display.contains("levels:"));
+        assert!(display.contains("global"));
+        assert!(display.contains("ctrl"));
+        assert!(display.contains("output: File"));
+    }
+
+    #[test]
+    fn test_log_conf_serde_basic() {
+        let json = r#"{
+            "level": "info",
+            "output": "Console"
+        }"#;
+        let conf: LogConf = serde_json::from_str(json).unwrap();
+        assert_eq!(conf.level, "info");
+        assert_eq!(conf.output, Output::Console);
+        assert!(conf.file.is_none());
+    }
+
+    #[test]
+    fn test_log_conf_serde_with_file() {
+        let json = r#"{
+            "level": "debug",
+            "output": "File",
+            "file": { "path": "/var/log/app" }
+        }"#;
+        let conf: LogConf = serde_json::from_str(json).unwrap();
+        assert_eq!(conf.level, "debug");
+        assert_eq!(conf.output, Output::File);
+        assert!(conf.file.is_some());
+        assert_eq!(conf.file.as_ref().unwrap().path, "/var/log/app");
+    }
+
+    #[test]
+    fn test_log_conf_serde_with_levels() {
+        let json = r#"{
+            "level": "warn",
+            "levels": { "ctrl": "info", "source": "debug" },
+            "output": "Both"
+        }"#;
+        let conf: LogConf = serde_json::from_str(json).unwrap();
+        assert_eq!(conf.level, "warn");
+        assert!(conf.levels.is_some());
+        let levels = conf.levels.as_ref().unwrap();
+        assert_eq!(levels.get("ctrl"), Some(&"info".to_string()));
+        assert_eq!(levels.get("source"), Some(&"debug".to_string()));
+        assert_eq!(conf.output, Output::Both);
+    }
+
+    #[test]
+    fn test_log_conf_serde_roundtrip() {
+        let conf = LogConf::default();
+        let json = serde_json::to_string(&conf).unwrap();
+        let parsed: LogConf = serde_json::from_str(&json).unwrap();
+        assert_eq!(conf, parsed);
+    }
+
+    #[test]
+    fn test_log_conf_reject_deprecated_output_path() {
+        let json = r#"{
+            "level": "info",
+            "output": "Console",
+            "output_path": "/old/path"
+        }"#;
+        let result: Result<LogConf, _> = serde_json::from_str(json);
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(err.contains("output_path"));
+    }
+
+    #[test]
+    fn test_log_conf_deny_unknown_fields() {
+        let json = r#"{
+            "level": "info",
+            "output": "Console",
+            "unknown_field": "value"
+        }"#;
+        let result: Result<LogConf, _> = serde_json::from_str(json);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_file_log_conf_serde() {
+        let json = r#"{ "path": "/var/log" }"#;
+        let conf: FileLogConf = serde_json::from_str(json).unwrap();
+        assert_eq!(conf.path, "/var/log");
+
+        let serialized = serde_json::to_string(&conf).unwrap();
+        assert!(serialized.contains("/var/log"));
+    }
+
+    #[test]
+    fn test_parse_lv_all_levels() {
+        assert_eq!(parse_lv("off").unwrap(), LevelFilter::Off);
+        assert_eq!(parse_lv("error").unwrap(), LevelFilter::Error);
+        assert_eq!(parse_lv("warn").unwrap(), LevelFilter::Warn);
+        assert_eq!(parse_lv("info").unwrap(), LevelFilter::Info);
+        assert_eq!(parse_lv("debug").unwrap(), LevelFilter::Debug);
+        assert_eq!(parse_lv("trace").unwrap(), LevelFilter::Trace);
+    }
+
+    #[test]
+    fn test_parse_lv_case_insensitive() {
+        assert_eq!(parse_lv("DEBUG").unwrap(), LevelFilter::Debug);
+        assert_eq!(parse_lv("Info").unwrap(), LevelFilter::Info);
+        assert_eq!(parse_lv("WARN").unwrap(), LevelFilter::Warn);
+        assert_eq!(parse_lv("ErRoR").unwrap(), LevelFilter::Error);
+    }
+
+    #[test]
+    fn test_parse_lv_invalid() {
+        assert!(parse_lv("invalid").is_err());
+        assert!(parse_lv("").is_err());
+        assert!(parse_lv("warning").is_err());
+    }
+
+    #[test]
+    fn test_parse_level_spec_single_level() {
+        let (root, targets) = parse_level_spec("info").unwrap();
+        assert_eq!(root, LevelFilter::Info);
+        assert!(targets.is_empty());
+    }
+
+    #[test]
+    fn test_parse_level_spec_with_targets() {
+        let (root, targets) = parse_level_spec("warn,ctrl=info,source=debug").unwrap();
+        assert_eq!(root, LevelFilter::Warn);
+        assert_eq!(targets.len(), 2);
+        assert!(
+            targets
+                .iter()
+                .any(|(k, v)| k == "ctrl" && *v == LevelFilter::Info)
+        );
+        assert!(
+            targets
+                .iter()
+                .any(|(k, v)| k == "source" && *v == LevelFilter::Debug)
+        );
+    }
+
+    #[test]
+    fn test_parse_level_spec_with_whitespace() {
+        let (root, targets) = parse_level_spec("warn , ctrl = info , source = debug").unwrap();
+        assert_eq!(root, LevelFilter::Warn);
+        assert_eq!(targets.len(), 2);
+    }
+
+    #[test]
+    fn test_parse_level_spec_empty_parts() {
+        let (root, targets) = parse_level_spec("warn,,ctrl=info,").unwrap();
+        assert_eq!(root, LevelFilter::Warn);
+        assert_eq!(targets.len(), 1);
+    }
+
+    #[test]
+    fn test_parse_level_spec_default_like() {
+        let spec = "warn,ctrl=info,launch=info,source=info,sink=info,stat=info,runtime=warn";
+        let (root, targets) = parse_level_spec(spec).unwrap();
+        assert_eq!(root, LevelFilter::Warn);
+        assert_eq!(targets.len(), 6);
+    }
+
+    #[test]
+    fn test_log_conf_with_setters() {
+        let conf = LogConf::default().with_output(Output::Console);
+        assert_eq!(conf.output, Output::Console);
+    }
+
+    #[test]
+    fn test_log_conf_getters() {
+        let conf = LogConf::default();
+        assert_eq!(conf.level(), &conf.level);
+        assert_eq!(conf.output(), &conf.output);
+        assert_eq!(conf.file(), &conf.file);
+        assert_eq!(conf.levels(), &conf.levels);
+    }
+}

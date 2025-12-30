@@ -121,3 +121,153 @@ impl DataFormat for Csv {
         output
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::net::IpAddr;
+    use std::str::FromStr;
+
+    #[test]
+    fn test_csv_default() {
+        let csv = Csv::default();
+        assert_eq!(csv.delimiter, ',');
+        assert_eq!(csv.quote_char, '"');
+        assert_eq!(csv.escape_char, '"');
+    }
+
+    #[test]
+    fn test_csv_new() {
+        let csv = Csv::new();
+        assert_eq!(csv.delimiter, ',');
+    }
+
+    #[test]
+    fn test_csv_builder_pattern() {
+        let csv = Csv::new()
+            .with_delimiter(';')
+            .with_quote_char('\'')
+            .with_escape_char('\\');
+        assert_eq!(csv.delimiter, ';');
+        assert_eq!(csv.quote_char, '\'');
+        assert_eq!(csv.escape_char, '\\');
+    }
+
+    #[test]
+    fn test_format_null() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_null(), "");
+    }
+
+    #[test]
+    fn test_format_bool() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_bool(&true), "true");
+        assert_eq!(csv.format_bool(&false), "false");
+    }
+
+    #[test]
+    fn test_format_string_simple() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_string("hello"), "hello");
+        assert_eq!(csv.format_string("world"), "world");
+    }
+
+    #[test]
+    fn test_format_string_with_delimiter() {
+        let csv = Csv::default();
+        // String containing delimiter should be quoted
+        assert_eq!(csv.format_string("hello,world"), "\"hello,world\"");
+    }
+
+    #[test]
+    fn test_format_string_with_newline() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_string("hello\nworld"), "\"hello\nworld\"");
+        assert_eq!(csv.format_string("hello\rworld"), "\"hello\rworld\"");
+    }
+
+    #[test]
+    fn test_format_string_with_quote() {
+        let csv = Csv::default();
+        // Quote char should be escaped by doubling
+        assert_eq!(csv.format_string("say \"hello\""), "\"say \"\"hello\"\"\"");
+    }
+
+    #[test]
+    fn test_format_i64() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_i64(&0), "0");
+        assert_eq!(csv.format_i64(&42), "42");
+        assert_eq!(csv.format_i64(&-100), "-100");
+        assert_eq!(csv.format_i64(&i64::MAX), i64::MAX.to_string());
+    }
+
+    #[test]
+    fn test_format_f64() {
+        let csv = Csv::default();
+        assert_eq!(csv.format_f64(&0.0), "0");
+        assert_eq!(csv.format_f64(&3.24), "3.24");
+        assert_eq!(csv.format_f64(&-2.5), "-2.5");
+    }
+
+    #[test]
+    fn test_format_ip() {
+        let csv = Csv::default();
+        let ipv4 = IpAddr::from_str("192.168.1.1").unwrap();
+        assert_eq!(csv.format_ip(&ipv4), "192.168.1.1");
+
+        let ipv6 = IpAddr::from_str("::1").unwrap();
+        assert_eq!(csv.format_ip(&ipv6), "::1");
+    }
+
+    #[test]
+    fn test_format_datetime() {
+        let csv = Csv::default();
+        let dt = chrono::NaiveDateTime::parse_from_str("2024-01-15 10:30:45", "%Y-%m-%d %H:%M:%S")
+            .unwrap();
+        let result = csv.format_datetime(&dt);
+        assert!(result.contains("2024"));
+        assert!(result.contains("01"));
+        assert!(result.contains("15"));
+    }
+
+    #[test]
+    fn test_format_record() {
+        let csv = Csv::default();
+        let record = DataRecord {
+            items: vec![
+                DataField::from_chars("name", "Alice"),
+                DataField::from_digit("age", 30),
+            ],
+        };
+        let result = csv.format_record(&record);
+        assert_eq!(result, "Alice,30");
+    }
+
+    #[test]
+    fn test_format_record_with_custom_delimiter() {
+        let csv = Csv::new().with_delimiter(';');
+        let record = DataRecord {
+            items: vec![
+                DataField::from_chars("a", "x"),
+                DataField::from_chars("b", "y"),
+            ],
+        };
+        let result = csv.format_record(&record);
+        assert_eq!(result, "x;y");
+    }
+
+    #[test]
+    fn test_format_record_with_special_chars() {
+        let csv = Csv::default();
+        let record = DataRecord {
+            items: vec![
+                DataField::from_chars("msg", "hello,world"),
+                DataField::from_digit("count", 5),
+            ],
+        };
+        let result = csv.format_record(&record);
+        assert!(result.contains("\"hello,world\""));
+    }
+}

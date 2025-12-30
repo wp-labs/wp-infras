@@ -1160,6 +1160,7 @@ dependencies = [
  "log4rs",
  "orion_conf",
  "serde",
+ "serde_json",
  "strum_macros",
 ]
 

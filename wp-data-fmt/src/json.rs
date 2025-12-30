@@ -148,3 +148,142 @@ fn to_json_value(value: &Value) -> JsonValue {
         _ => JsonValue::Null,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::formatter::DataFormat;
+    use std::net::IpAddr;
+    use std::str::FromStr;
+
+    #[test]
+    fn test_json_stdfmt_null() {
+        assert_eq!(Json::stdfmt_null(), "null");
+    }
+
+    #[test]
+    fn test_json_stdfmt_bool() {
+        assert_eq!(Json::stdfmt_bool(&true), "true");
+        assert_eq!(Json::stdfmt_bool(&false), "false");
+    }
+
+    #[test]
+    fn test_json_stdfmt_string() {
+        assert_eq!(Json::stdfmt_string("hello"), "\"hello\"");
+        assert_eq!(Json::stdfmt_string(""), "\"\"");
+        // Special chars should be escaped
+        assert_eq!(Json::stdfmt_string("say \"hi\""), "\"say \\\"hi\\\"\"");
+    }
+
+    #[test]
+    fn test_json_stdfmt_i64() {
+        assert_eq!(Json::stdfmt_i64(&0), "0");
+        assert_eq!(Json::stdfmt_i64(&42), "42");
+        assert_eq!(Json::stdfmt_i64(&-100), "-100");
+    }
+
+    #[test]
+    fn test_json_stdfmt_f64_normal() {
+        assert_eq!(Json::stdfmt_f64(&3.24), "3.24");
+        assert_eq!(Json::stdfmt_f64(&0.0), "0.0");
+        assert_eq!(Json::stdfmt_f64(&-2.5), "-2.5");
+    }
+
+    #[test]
+    fn test_json_stdfmt_f64_special() {
+        assert_eq!(Json::stdfmt_f64(&f64::NAN), "null");
+        assert_eq!(Json::stdfmt_f64(&f64::INFINITY), "\"Infinity\"");
+        assert_eq!(Json::stdfmt_f64(&f64::NEG_INFINITY), "\"-Infinity\"");
+    }
+
+    #[test]
+    fn test_json_stdfmt_ip_addr() {
+        let ipv4 = IpAddr::from_str("192.168.1.1").unwrap();
+        assert_eq!(Json::stdfmt_ip_addr(&ipv4), "\"192.168.1.1\"");
+
+        let ipv6 = IpAddr::from_str("::1").unwrap();
+        assert_eq!(Json::stdfmt_ip_addr(&ipv6), "\"::1\"");
+    }
+
+    #[test]
+    fn test_json_stdfmt_datetime() {
+        let dt = chrono::NaiveDateTime::parse_from_str("2024-01-15 10:30:45", "%Y-%m-%d %H:%M:%S")
+            .unwrap();
+        let result = Json::stdfmt_datetime(&dt);
+        assert!(result.starts_with('"'));
+        assert!(result.ends_with('"'));
+        assert!(result.contains("2024"));
+    }
+
+    #[test]
+    fn test_json_stdfmt_field_with_name() {
+        let field = DataField::from_chars("name", "Alice");
+        let result = Json::stdfmt_field(&field);
+        assert_eq!(result, "\"name\":\"Alice\"");
+    }
+
+    #[test]
+    fn test_json_stdfmt_field_without_name() {
+        let field = DataField::from_chars("", "value");
+        let result = Json::stdfmt_field(&field);
+        assert_eq!(result, "\"value\"");
+    }
+
+    #[test]
+    fn test_json_stdfmt_record() {
+        let record = DataRecord {
+            items: vec![
+                DataField::from_chars("name", "Alice"),
+                DataField::from_digit("age", 30),
+            ],
+        };
+        let result = Json::stdfmt_record(&record);
+        assert!(result.starts_with('{'));
+        assert!(result.ends_with('}'));
+        assert!(result.contains("\"name\":\"Alice\""));
+        assert!(result.contains("\"age\":30"));
+    }
+
+    #[test]
+    fn test_json_dataformat_impl() {
+        let json = Json;
+        assert_eq!(json.format_null(), "null");
+        assert_eq!(json.format_bool(&true), "true");
+        assert_eq!(json.format_string("test"), "\"test\"");
+        assert_eq!(json.format_i64(&42), "42");
+        assert_eq!(json.format_f64(&3.24), "3.24");
+    }
+
+    #[test]
+    fn test_to_json_value_basic() {
+        assert_eq!(to_json_value(&Value::Bool(true)), JsonValue::Bool(true));
+        assert_eq!(
+            to_json_value(&Value::Chars("hi".into())),
+            JsonValue::String("hi".into())
+        );
+        assert_eq!(
+            to_json_value(&Value::Digit(42)),
+            JsonValue::Number(42.into())
+        );
+    }
+
+    #[test]
+    fn test_to_json_value_float_special() {
+        assert_eq!(to_json_value(&Value::Float(f64::NAN)), JsonValue::Null);
+        assert_eq!(
+            to_json_value(&Value::Float(f64::INFINITY)),
+            JsonValue::String("Infinity".into())
+        );
+    }
+
+    #[test]
+    fn test_json_stdfmt_array() {
+        let arr = vec![
+            DataField::from_digit("", 1),
+            DataField::from_digit("", 2),
+            DataField::from_digit("", 3),
+        ];
+        let result = Json::stdfmt_array(&arr);
+        assert_eq!(result, "[1,2,3]");
+    }
+}

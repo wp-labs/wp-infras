@@ -70,3 +70,136 @@ impl DataFormat for Raw {
             .join(" ")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::net::IpAddr;
+    use std::str::FromStr;
+
+    #[test]
+    fn test_raw_new() {
+        let raw = Raw::new();
+        assert_eq!(raw.format_null(), "");
+    }
+
+    #[test]
+    fn test_raw_default() {
+        let raw = Raw;
+        assert_eq!(raw.format_null(), "");
+    }
+
+    #[test]
+    fn test_format_null() {
+        let raw = Raw;
+        assert_eq!(raw.format_null(), "");
+    }
+
+    #[test]
+    fn test_format_bool() {
+        let raw = Raw;
+        assert_eq!(raw.format_bool(&true), "true");
+        assert_eq!(raw.format_bool(&false), "false");
+    }
+
+    #[test]
+    fn test_format_string() {
+        let raw = Raw;
+        assert_eq!(raw.format_string("hello"), "hello");
+        assert_eq!(raw.format_string("world"), "world");
+        assert_eq!(raw.format_string(""), "");
+    }
+
+    #[test]
+    fn test_format_i64() {
+        let raw = Raw;
+        assert_eq!(raw.format_i64(&0), "0");
+        assert_eq!(raw.format_i64(&42), "42");
+        assert_eq!(raw.format_i64(&-100), "-100");
+        assert_eq!(raw.format_i64(&i64::MAX), i64::MAX.to_string());
+    }
+
+    #[test]
+    fn test_format_f64() {
+        let raw = Raw;
+        assert_eq!(raw.format_f64(&3.24), "3.24");
+        assert_eq!(raw.format_f64(&0.0), "0");
+        assert_eq!(raw.format_f64(&-2.5), "-2.5");
+    }
+
+    #[test]
+    fn test_format_ip() {
+        let raw = Raw;
+        let ipv4 = IpAddr::from_str("192.168.1.1").unwrap();
+        assert_eq!(raw.format_ip(&ipv4), "192.168.1.1");
+
+        let ipv6 = IpAddr::from_str("::1").unwrap();
+        assert_eq!(raw.format_ip(&ipv6), "::1");
+    }
+
+    #[test]
+    fn test_format_datetime() {
+        let raw = Raw;
+        let dt = chrono::NaiveDateTime::parse_from_str("2024-01-15 10:30:45", "%Y-%m-%d %H:%M:%S")
+            .unwrap();
+        let result = raw.format_datetime(&dt);
+        assert!(result.contains("2024"));
+        assert!(result.contains("01"));
+        assert!(result.contains("15"));
+    }
+
+    #[test]
+    fn test_format_field_chars() {
+        let raw = Raw;
+        let field = DataField::from_chars("name", "Alice");
+        let result = raw.format_field(&field);
+        assert_eq!(result, "Alice");
+    }
+
+    #[test]
+    fn test_format_field_digit() {
+        let raw = Raw;
+        let field = DataField::from_digit("age", 30);
+        let result = raw.format_field(&field);
+        assert_eq!(result, "30");
+    }
+
+    #[test]
+    fn test_format_record() {
+        let raw = Raw;
+        let record = DataRecord {
+            items: vec![
+                DataField::from_chars("name", "Alice"),
+                DataField::from_digit("age", 30),
+            ],
+        };
+        let result = raw.format_record(&record);
+        assert_eq!(result, "Alice 30");
+    }
+
+    #[test]
+    fn test_format_array_empty() {
+        let raw = Raw;
+        let arr: Vec<DataField> = vec![];
+        assert_eq!(raw.format_array(&arr), "[]");
+    }
+
+    #[test]
+    fn test_format_array_with_values() {
+        let raw = Raw;
+        let arr = vec![
+            DataField::from_digit("", 1),
+            DataField::from_digit("", 2),
+            DataField::from_digit("", 3),
+        ];
+        let result = raw.format_array(&arr);
+        assert_eq!(result, "[1, 2, 3]");
+    }
+
+    #[test]
+    fn test_format_object_empty() {
+        let raw = Raw;
+        let obj = ObjectValue::new();
+        assert_eq!(raw.format_object(&obj), "{}");
+    }
+}

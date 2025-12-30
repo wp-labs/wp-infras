@@ -17,6 +17,9 @@ log4rs = { workspace = true }
 getset = { workspace = true }
 orion_conf =  { workspace = true }
 
+[dev-dependencies]
+serde_json = { workspace = true }
+
 [features]
 default = ["std"]
 std = []
