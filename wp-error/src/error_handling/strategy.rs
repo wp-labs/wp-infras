@@ -84,3 +84,95 @@ impl std::fmt::Display for RobustnessMode {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_robustness_mode_default() {
+        let mode = RobustnessMode::default();
+        assert_eq!(mode, RobustnessMode::Debug);
+    }
+
+    #[test]
+    fn test_robustness_mode_from_str_debug() {
+        let mode = RobustnessMode::from("debug");
+        assert_eq!(mode, RobustnessMode::Debug);
+    }
+
+    #[test]
+    fn test_robustness_mode_from_str_normal() {
+        let mode = RobustnessMode::from("normal");
+        assert_eq!(mode, RobustnessMode::Normal);
+    }
+
+    #[test]
+    fn test_robustness_mode_from_str_strict() {
+        let mode = RobustnessMode::from("strict");
+        assert_eq!(mode, RobustnessMode::Strict);
+    }
+
+    #[test]
+    fn test_robustness_mode_from_str_unknown() {
+        let mode = RobustnessMode::from("unknown");
+        assert_eq!(mode, RobustnessMode::Debug); // fallback
+    }
+
+    #[test]
+    fn test_robustness_mode_display() {
+        assert_eq!(RobustnessMode::Debug.to_string(), "debug");
+        assert_eq!(RobustnessMode::Normal.to_string(), "normal");
+        assert_eq!(RobustnessMode::Strict.to_string(), "strict");
+    }
+
+    #[test]
+    fn test_robustness_mode_serde() {
+        let json = "\"debug\"";
+        let mode: RobustnessMode = serde_json::from_str(json).unwrap();
+        assert_eq!(mode, RobustnessMode::Debug);
+
+        let json = "\"normal\"";
+        let mode: RobustnessMode = serde_json::from_str(json).unwrap();
+        assert_eq!(mode, RobustnessMode::Normal);
+
+        let json = "\"strict\"";
+        let mode: RobustnessMode = serde_json::from_str(json).unwrap();
+        assert_eq!(mode, RobustnessMode::Strict);
+    }
+
+    #[test]
+    fn test_robustness_mode_serialize() {
+        assert_eq!(
+            serde_json::to_string(&RobustnessMode::Debug).unwrap(),
+            "\"debug\""
+        );
+        assert_eq!(
+            serde_json::to_string(&RobustnessMode::Normal).unwrap(),
+            "\"normal\""
+        );
+        assert_eq!(
+            serde_json::to_string(&RobustnessMode::Strict).unwrap(),
+            "\"strict\""
+        );
+    }
+
+    #[test]
+    fn test_robustness_mode_clone() {
+        let mode = RobustnessMode::Normal;
+        let cloned = mode.clone();
+        assert_eq!(mode, cloned);
+    }
+
+    #[test]
+    fn test_error_handling_strategy_from_err_strategy() {
+        let retry: ErrorHandlingStrategy = ErrStrategy::Retry.into();
+        matches!(retry, ErrorHandlingStrategy::FixRetry);
+
+        let ignore: ErrorHandlingStrategy = ErrStrategy::Ignore.into();
+        matches!(ignore, ErrorHandlingStrategy::Ignore);
+
+        let throw: ErrorHandlingStrategy = ErrStrategy::Throw.into();
+        matches!(throw, ErrorHandlingStrategy::Throw);
+    }
+}

@@ -152,3 +152,284 @@ impl SysErrorCode for RR {
         "run"
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use orion_error::{UvsLogicFrom, UvsReason};
+    use std::marker::PhantomData;
+
+    #[test]
+    fn test_sys_error_code_default_tag() {
+        struct DummyReason;
+        impl SysErrorCode for DummyReason {
+            fn sys_code(&self) -> u16 {
+                12345
+            }
+        }
+        let dummy = DummyReason;
+        assert_eq!(dummy.sys_tag(), "wp.err");
+        assert_eq!(dummy.sys_code(), 12345);
+    }
+
+    // ConfReason<ConfCore> tests
+    #[test]
+    fn test_conf_core_syntax_code() {
+        let reason: ConfReason<ConfCore> = ConfReason::Syntax("test".into());
+        assert_eq!(reason.sys_code(), 42201);
+        assert_eq!(reason.sys_tag(), "conf.core");
+    }
+
+    #[test]
+    fn test_conf_core_not_found_code() {
+        let reason: ConfReason<ConfCore> = ConfReason::NotFound("missing".into());
+        assert_eq!(reason.sys_code(), 40401);
+    }
+
+    #[test]
+    fn test_conf_core_uvs_code() {
+        let reason: ConfReason<ConfCore> =
+            ConfReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50001);
+    }
+
+    #[test]
+    fn test_conf_core_take_code() {
+        let reason: ConfReason<ConfCore> = ConfReason::_Take(PhantomData);
+        assert_eq!(reason.sys_code(), 50009);
+    }
+
+    // ConfReason<ConfFeature> tests
+    #[test]
+    fn test_conf_feature_syntax_code() {
+        let reason: ConfReason<ConfFeature> = ConfReason::Syntax("test".into());
+        assert_eq!(reason.sys_code(), 42202);
+        assert_eq!(reason.sys_tag(), "conf.feature");
+    }
+
+    #[test]
+    fn test_conf_feature_not_found_code() {
+        let reason: ConfReason<ConfFeature> = ConfReason::NotFound("missing".into());
+        assert_eq!(reason.sys_code(), 40402);
+    }
+
+    #[test]
+    fn test_conf_feature_uvs_code() {
+        let reason: ConfReason<ConfFeature> =
+            ConfReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50002);
+    }
+
+    // ConfReason<ConfDynamic> tests
+    #[test]
+    fn test_conf_dynamic_syntax_code() {
+        let reason: ConfReason<ConfDynamic> = ConfReason::Syntax("test".into());
+        assert_eq!(reason.sys_code(), 42203);
+        assert_eq!(reason.sys_tag(), "conf.dynamic");
+    }
+
+    #[test]
+    fn test_conf_dynamic_not_found_code() {
+        let reason: ConfReason<ConfDynamic> = ConfReason::NotFound("missing".into());
+        assert_eq!(reason.sys_code(), 40403);
+    }
+
+    #[test]
+    fn test_conf_dynamic_uvs_code() {
+        let reason: ConfReason<ConfDynamic> =
+            ConfReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50003);
+    }
+
+    // OMLCodeReason tests
+    #[test]
+    fn test_oml_syntax_code() {
+        let reason = OMLCodeReason::Syntax("parse error".into());
+        assert_eq!(reason.sys_code(), 42211);
+        assert_eq!(reason.sys_tag(), "parse.oml");
+    }
+
+    #[test]
+    fn test_oml_not_found_code() {
+        let reason = OMLCodeReason::NotFound("file.oml".into());
+        assert_eq!(reason.sys_code(), 40411);
+    }
+
+    #[test]
+    fn test_oml_uvs_code() {
+        let reason = OMLCodeReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50011);
+    }
+
+    // DataErrKind tests
+    #[test]
+    fn test_data_err_format_error_code() {
+        let reason = DataErrKind::FormatError("bad format".into(), None);
+        assert_eq!(reason.sys_code(), 42212);
+        assert_eq!(reason.sys_tag(), "parse.data");
+    }
+
+    #[test]
+    fn test_data_err_not_complete_code() {
+        let reason = DataErrKind::NotComplete;
+        assert_eq!(reason.sys_code(), 42213);
+    }
+
+    #[test]
+    fn test_data_err_unparse_code() {
+        let reason = DataErrKind::UnParse("unparseable".into());
+        assert_eq!(reason.sys_code(), 40412);
+    }
+
+    #[test]
+    fn test_data_err_less_data_code() {
+        let reason = DataErrKind::LessData;
+        assert_eq!(reason.sys_code(), 42214);
+    }
+
+    #[test]
+    fn test_data_err_empty_data_code() {
+        let reason = DataErrKind::EmptyData;
+        assert_eq!(reason.sys_code(), 42215);
+    }
+
+    #[test]
+    fn test_data_err_less_stc_code() {
+        let reason = DataErrKind::LessStc("struct".into());
+        assert_eq!(reason.sys_code(), 42216);
+    }
+
+    #[test]
+    fn test_data_err_less_def_code() {
+        let reason = DataErrKind::LessDef("define".into());
+        assert_eq!(reason.sys_code(), 42217);
+    }
+
+    // SourceReason tests
+    #[test]
+    fn test_source_not_data_code() {
+        let reason = SourceReason::NotData;
+        assert_eq!(reason.sys_code(), 20401);
+        assert_eq!(reason.sys_tag(), "source");
+    }
+
+    #[test]
+    fn test_source_eof_code() {
+        let reason = SourceReason::EOF;
+        assert_eq!(reason.sys_code(), 20402);
+    }
+
+    #[test]
+    fn test_source_supplier_error_code() {
+        let reason = SourceReason::SupplierError("supplier failed".into());
+        assert_eq!(reason.sys_code(), 50201);
+    }
+
+    #[test]
+    fn test_source_disconnect_code() {
+        let reason = SourceReason::Disconnect("connection lost".into());
+        assert_eq!(reason.sys_code(), 49901);
+    }
+
+    #[test]
+    fn test_source_other_code() {
+        let reason = SourceReason::Other("unknown".into());
+        assert_eq!(reason.sys_code(), 50209);
+    }
+
+    #[test]
+    fn test_source_uvs_code() {
+        let reason = SourceReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50021);
+    }
+
+    // SinkReason tests
+    #[test]
+    fn test_sink_sink_code() {
+        let reason = SinkReason::Sink("sink failed".into());
+        assert_eq!(reason.sys_code(), 50211);
+        assert_eq!(reason.sys_tag(), "dist");
+    }
+
+    #[test]
+    fn test_sink_mock_code() {
+        let reason = SinkReason::Mock;
+        assert_eq!(reason.sys_code(), 50312);
+    }
+
+    #[test]
+    fn test_sink_stg_ctrl_code() {
+        let reason = SinkReason::StgCtrl;
+        assert_eq!(reason.sys_code(), 50311);
+    }
+
+    #[test]
+    fn test_sink_uvs_code() {
+        let reason = SinkReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50031);
+    }
+
+    // KnowledgeReason tests
+    #[test]
+    fn test_knowledge_not_data_code() {
+        let reason = KnowledgeReason::NotData;
+        assert_eq!(reason.sys_code(), 50042);
+        assert_eq!(reason.sys_tag(), "knowledge");
+    }
+
+    #[test]
+    fn test_knowledge_uvs_code() {
+        let reason = KnowledgeReason::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50041);
+    }
+
+    // RunReason tests
+    #[test]
+    fn test_run_dist_sink_error_code() {
+        let reason = RR::Dist(DistFocus::SinkError("error".into()));
+        assert_eq!(reason.sys_code(), 50211);
+        assert_eq!(reason.sys_tag(), "run");
+    }
+
+    #[test]
+    fn test_run_dist_stg_ctrl_code() {
+        let reason = RR::Dist(DistFocus::StgCtrl);
+        assert_eq!(reason.sys_code(), 50311);
+    }
+
+    #[test]
+    fn test_run_source_no_data_code() {
+        let reason = RR::Source(SourceFocus::NoData);
+        assert_eq!(reason.sys_code(), 20401);
+    }
+
+    #[test]
+    fn test_run_source_eof_code() {
+        let reason = RR::Source(SourceFocus::Eof);
+        assert_eq!(reason.sys_code(), 20402);
+    }
+
+    #[test]
+    fn test_run_source_supplier_error_code() {
+        let reason = RR::Source(SourceFocus::SupplierError("error".into()));
+        assert_eq!(reason.sys_code(), 50201);
+    }
+
+    #[test]
+    fn test_run_source_other_code() {
+        let reason = RR::Source(SourceFocus::Other("other".into()));
+        assert_eq!(reason.sys_code(), 50209);
+    }
+
+    #[test]
+    fn test_run_source_disconnect_code() {
+        let reason = RR::Source(SourceFocus::Disconnect("disconnect".into()));
+        assert_eq!(reason.sys_code(), 49901);
+    }
+
+    #[test]
+    fn test_run_uvs_code() {
+        let reason = RR::Uvs(UvsReason::from_logic("test".to_string()));
+        assert_eq!(reason.sys_code(), 50041);
+    }
+}
