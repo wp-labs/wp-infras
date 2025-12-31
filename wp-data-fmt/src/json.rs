@@ -40,7 +40,7 @@ impl StaticDataFormatter for Json {
     fn stdfmt_object(value: &ObjectValue) -> String {
         let mut json_obj = serde_json::Map::new();
         for (k, v) in value.iter() {
-            json_obj.insert(k.clone(), to_json_value(v.get_value()));
+            json_obj.insert(k.to_string(), to_json_value(v.get_value()));
         }
         json!(json_obj).to_string()
     }
@@ -138,7 +138,7 @@ fn to_json_value(value: &Value) -> JsonValue {
         Value::Obj(v) => {
             let mut map = serde_json::Map::new();
             for (k, field) in v.iter() {
-                map.insert(k.clone(), to_json_value(field.get_value()));
+                map.insert(k.to_string(), to_json_value(field.get_value()));
             }
             JsonValue::Object(map)
         }
