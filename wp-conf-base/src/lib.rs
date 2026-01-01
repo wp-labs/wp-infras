@@ -3,4 +3,4 @@ pub mod structure;
 
 // Re-export types, traits, and functions for tests
 pub use connector::ConnectorKindAdapter;
-pub use structure::{GetTagStr, Protocol, TagParse, Validate, de_bool_onoff};
+pub use structure::{Protocol, Validate, de_bool_onoff};

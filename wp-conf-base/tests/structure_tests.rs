@@ -2,7 +2,7 @@ use orion_conf::error::{ConfIOReason, StructError};
 use serde::Deserialize;
 use std::str::FromStr;
 use wp_conf_base::structure::ConfStdOperation;
-use wp_conf_base::{GetTagStr, Protocol, TagParse, Validate, de_bool_onoff};
+use wp_conf_base::{Protocol, Validate, de_bool_onoff};
 
 #[test]
 fn test_protocol_from_str() {
@@ -29,40 +29,6 @@ fn test_protocol_from_str() {
 fn test_protocol_display() {
     assert_eq!(format!("{}", Protocol::TCP), "tcp");
     assert_eq!(format!("{}", Protocol::UDP), "udp");
-}
-
-#[test]
-fn test_tag_parse() {
-    struct TestTags {
-        tags: Vec<String>,
-    }
-
-    impl GetTagStr for TestTags {
-        fn tag_vec_str(&self) -> &Vec<String> {
-            &self.tags
-        }
-    }
-
-    let test_tags = TestTags {
-        tags: vec![
-            "env:production".to_string(),
-            "region:us-west".to_string(),
-            "version:1.0".to_string(),
-            "invalid_tag_without_colon".to_string(),
-            "  key : value  ".to_string(), // Test trimming
-            ":missing_key".to_string(),
-            "   : also_missing".to_string(),
-        ],
-    };
-
-    let tag_set = test_tags.take_tag();
-
-    assert_eq!(tag_set.get("env"), Some("production"));
-    assert_eq!(tag_set.get("region"), Some("us-west"));
-    assert_eq!(tag_set.get("version"), Some("1.0"));
-    assert_eq!(tag_set.get("key"), Some("value"));
-    assert_eq!(tag_set.get("invalid_tag_without_colon"), None);
-    assert_eq!(tag_set.get(""), None);
 }
 
 #[test]

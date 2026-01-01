@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use wp_model_core::model::TagSet;
 
 use orion_conf::error::OrionConfResult;
 
@@ -12,13 +11,6 @@ pub enum Protocol {
     #[default]
     #[serde(rename = "udp")]
     UDP,
-}
-
-pub trait TagParse {
-    fn take_tag(&self) -> TagSet;
-}
-pub trait GetTagStr {
-    fn tag_vec_str(&self) -> &Vec<String>;
 }
 
 impl FromStr for Protocol {
@@ -33,25 +25,6 @@ impl FromStr for Protocol {
                 s
             )),
         }
-    }
-}
-impl<T> TagParse for T
-where
-    T: GetTagStr,
-{
-    fn take_tag(&self) -> TagSet {
-        let mut tags = TagSet::default();
-        for s in self.tag_vec_str() {
-            if let Some((k, v)) = s.split_once(':') {
-                let key = k.trim();
-                if key.is_empty() {
-                    log::warn!("ignore tag with empty key: {}", s);
-                    continue;
-                }
-                tags.append(key, v.trim())
-            }
-        }
-        tags
     }
 }
 
