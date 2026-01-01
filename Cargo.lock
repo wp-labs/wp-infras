@@ -1119,7 +1119,7 @@ dependencies = [
 [[package]]
 name = "wp-connector-api"
 version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#c63cfc644d2eb69c43ce5fe59232f18bc5ffbfe2"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#02a3262880c5fa84f46b7a7e744edef45813ab77"
 dependencies = [
  "anyhow",
  "async-broadcast",
@@ -1179,7 +1179,7 @@ dependencies = [
 [[package]]
 name = "wp-model-core"
 version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#c63cfc644d2eb69c43ce5fe59232f18bc5ffbfe2"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#02a3262880c5fa84f46b7a7e744edef45813ab77"
 dependencies = [
  "arcstr",
  "chrono",
@@ -1195,7 +1195,7 @@ dependencies = [
 [[package]]
 name = "wp-parse-api"
 version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#c63cfc644d2eb69c43ce5fe59232f18bc5ffbfe2"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7#02a3262880c5fa84f46b7a7e744edef45813ab77"
 dependencies = [
  "bytes",
  "derive_more",

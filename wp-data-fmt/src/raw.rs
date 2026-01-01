@@ -56,7 +56,7 @@ impl DataFormat for Raw {
     }
     fn format_field(&self, field: &DataField) -> String {
         match field.get_value() {
-            Value::Chars(s) => s.clone(),
+            Value::Chars(s) => s.to_string(),
             _ => self.fmt_value(field.get_value()),
         }
     }

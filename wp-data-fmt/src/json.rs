@@ -118,7 +118,7 @@ impl crate::formatter::DataFormat for Json {
 fn to_json_value(value: &Value) -> JsonValue {
     match value {
         Value::Bool(v) => JsonValue::Bool(*v),
-        Value::Chars(v) => JsonValue::String(v.clone()),
+        Value::Chars(v) => JsonValue::String(v.to_string()),
         Value::Digit(v) => JsonValue::Number((*v).into()),
         Value::Float(v) => {
             if v.is_nan() {
