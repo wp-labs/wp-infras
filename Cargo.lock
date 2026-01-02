@@ -1143,8 +1143,8 @@ dependencies = [
 
 [[package]]
 name = "wp-connector-api"
-version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#871402f5291b6772aa84d1274218868ac6d060c8"
+version = "0.7.0"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#e6b58c23c870dbec205747f9389ceadc6441e461"
 dependencies = [
  "anyhow",
  "async-broadcast",
@@ -1155,6 +1155,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
+ "smol_str",
  "thiserror",
  "toml",
  "wp-model-core",
@@ -1203,8 +1204,8 @@ dependencies = [
 
 [[package]]
 name = "wp-model-core"
-version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#871402f5291b6772aa84d1274218868ac6d060c8"
+version = "0.7.0"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#e6b58c23c870dbec205747f9389ceadc6441e461"
 dependencies = [
  "arcstr",
  "chrono",
@@ -1220,8 +1221,8 @@ dependencies = [
 
 [[package]]
 name = "wp-parse-api"
-version = "0.6.1"
-source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#871402f5291b6772aa84d1274218868ac6d060c8"
+version = "0.7.0"
+source = "git+https://github.com/wp-labs/wp-open-api?branch=develop%2F0.7-smol#e6b58c23c870dbec205747f9389ceadc6441e461"
 dependencies = [
  "bytes",
  "derive_more",
