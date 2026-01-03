@@ -24,8 +24,8 @@ orion-error = "0.5.5"
 orion_conf =  { version = "~0.3", features = ["toml"]}
 winnow = "~0.7"
 derive_more = "2.1"
-wp_connector_api = { package = "wp-connector-api",  git = "https://github.com/wp-labs/wp-open-api", branch = "develop/0.7-smol" }
-wp_model_core    = { package = "wp-model-core",     git = "https://github.com/wp-labs/wp-open-api", branch = "develop/0.7-smol" }
+wp_connector_api = { package = "wp-connector-api",  git = "https://github.com/wp-labs/wp-open-api", tag = "v0.7.0-beta" }
+wp_model_core    = { package = "wp-model-core",     git = "https://github.com/wp-labs/wp-open-api", tag = "v0.7.0-beta" }
 
 unicode-segmentation = "~1.12"
 serde = { version = "~1.0", features = ["derive"] }
