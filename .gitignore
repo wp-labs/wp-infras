@@ -2,3 +2,4 @@
 target
 .report
 *.log
+Cargo.lock
