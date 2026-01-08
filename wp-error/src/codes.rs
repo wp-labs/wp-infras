@@ -1,10 +1,110 @@
 //! System-wide error code contract for wp-error.
 //! Provide a single place to convert domain reasons into stable numeric codes.
 
+/// Centralized plan for the 5-digit system error codes.
+///
+/// The first digit hints the HTTP mapping (2=NoContent, 4=Client, 5=Server), while the
+/// middle two digits reserve blocks per domain (20=conf, 21=parse, 22=source, 23=dist,
+/// 24=run, 25=knowledge, 26=security, etc.). The last two digits are scoped reasons.
+/// Keeping these constants together makes future assignments deliberate and visible.
+pub mod plan {
+    pub const DEFAULT_TAG: &str = "wp.err";
+
+    pub mod conf {
+        pub mod shared {
+            pub const TAKE: u16 = 50009;
+        }
+
+        pub mod core {
+            pub const TAG: &str = "conf.core";
+            pub const SYNTAX: u16 = 42201;
+            pub const NOT_FOUND: u16 = 40401;
+            pub const UVS: u16 = 50001;
+        }
+
+        pub mod feature {
+            pub const TAG: &str = "conf.feature";
+            pub const SYNTAX: u16 = 42202;
+            pub const NOT_FOUND: u16 = 40402;
+            pub const UVS: u16 = 50002;
+        }
+
+        pub mod dynamic {
+            pub const TAG: &str = "conf.dynamic";
+            pub const SYNTAX: u16 = 42203;
+            pub const NOT_FOUND: u16 = 40403;
+            pub const UVS: u16 = 50003;
+        }
+    }
+
+    pub mod security {
+        pub const SEC: u16 = 62001;
+        pub const UVS: u16 = 50003;
+    }
+
+    pub mod parse {
+        pub mod oml {
+            pub const TAG: &str = "parse.oml";
+            pub const SYNTAX: u16 = 42211;
+            pub const NOT_FOUND: u16 = 40411;
+            pub const UVS: u16 = 50011;
+        }
+
+        pub mod data {
+            pub const TAG: &str = "parse.data";
+            pub const FORMAT_ERROR: u16 = 42212;
+            pub const NOT_COMPLETE: u16 = 42213;
+            pub const UNPARSE: u16 = 40412;
+            pub const LESS_DATA: u16 = 42214;
+            pub const EMPTY_DATA: u16 = 42215;
+            pub const LESS_STC: u16 = 42216;
+            pub const LESS_DEF: u16 = 42217;
+        }
+    }
+
+    pub mod source {
+        pub const TAG: &str = "source";
+        pub const NOT_DATA: u16 = 20401;
+        pub const EOF: u16 = 20402;
+        pub const SUPPLIER_ERROR: u16 = 50201;
+        pub const DISCONNECT: u16 = 49901;
+        pub const OTHER: u16 = 50209;
+        pub const UVS: u16 = 50021;
+    }
+
+    pub mod dist {
+        pub const TAG: &str = "dist";
+        pub const SINK_ERROR: u16 = 50211;
+        pub const STG_CTRL: u16 = 50311;
+        pub const MOCK: u16 = 50312;
+        pub const UVS: u16 = 50031;
+    }
+
+    pub mod knowledge {
+        pub const TAG: &str = "knowledge";
+        pub const UVS: u16 = 50041;
+        pub const NOT_DATA: u16 = 50042;
+    }
+
+    pub mod run {
+        pub const TAG: &str = "run";
+
+        pub mod dist {
+            pub use super::super::dist::{SINK_ERROR, STG_CTRL};
+        }
+
+        pub mod source {
+            pub use super::super::source::{DISCONNECT, EOF, NOT_DATA, OTHER, SUPPLIER_ERROR};
+        }
+
+        pub const UVS: u16 = 50041;
+    }
+}
+
 pub trait SysErrorCode {
     fn sys_code(&self) -> u16;
     fn sys_tag(&self) -> &'static str {
-        "wp.err"
+        plan::DEFAULT_TAG
     }
 }
 
@@ -19,50 +119,50 @@ use crate::parse_error::{DataErrKind, OMLCodeReason};
 impl SysErrorCode for ConfReason<ConfCore> {
     fn sys_code(&self) -> u16 {
         match self {
-            ConfReason::Syntax(_) => 42201,
-            ConfReason::NotFound(_) => 40401,
-            ConfReason::Uvs(_) => 50001,
-            ConfReason::_Take(_) => 50009,
+            ConfReason::Syntax(_) => plan::conf::core::SYNTAX,
+            ConfReason::NotFound(_) => plan::conf::core::NOT_FOUND,
+            ConfReason::Uvs(_) => plan::conf::core::UVS,
+            ConfReason::_Take(_) => plan::conf::shared::TAKE,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "conf.core"
+        plan::conf::core::TAG
     }
 }
 
 impl SysErrorCode for ConfReason<ConfFeature> {
     fn sys_code(&self) -> u16 {
         match self {
-            ConfReason::Syntax(_) => 42202,
-            ConfReason::NotFound(_) => 40402,
-            ConfReason::Uvs(_) => 50002,
-            ConfReason::_Take(_) => 50009,
+            ConfReason::Syntax(_) => plan::conf::feature::SYNTAX,
+            ConfReason::NotFound(_) => plan::conf::feature::NOT_FOUND,
+            ConfReason::Uvs(_) => plan::conf::feature::UVS,
+            ConfReason::_Take(_) => plan::conf::shared::TAKE,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "conf.feature"
+        plan::conf::feature::TAG
     }
 }
 
 impl SysErrorCode for ConfReason<ConfDynamic> {
     fn sys_code(&self) -> u16 {
         match self {
-            ConfReason::Syntax(_) => 42203,
-            ConfReason::NotFound(_) => 40403,
-            ConfReason::Uvs(_) => 50003,
-            ConfReason::_Take(_) => 50009,
+            ConfReason::Syntax(_) => plan::conf::dynamic::SYNTAX,
+            ConfReason::NotFound(_) => plan::conf::dynamic::NOT_FOUND,
+            ConfReason::Uvs(_) => plan::conf::dynamic::UVS,
+            ConfReason::_Take(_) => plan::conf::shared::TAKE,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "conf.dynamic"
+        plan::conf::dynamic::TAG
     }
 }
 
 impl SysErrorCode for OrionSecReason {
     fn sys_code(&self) -> u16 {
         match self {
-            OrionSecReason::Sec(_) => 60001,
-            OrionSecReason::Uvs(_) => 50003,
+            OrionSecReason::Sec(_) => plan::security::SEC,
+            OrionSecReason::Uvs(_) => plan::security::UVS,
         }
     }
 }
@@ -70,30 +170,30 @@ impl SysErrorCode for OrionSecReason {
 impl SysErrorCode for OMLCodeReason {
     fn sys_code(&self) -> u16 {
         match self {
-            OMLCodeReason::Syntax(_) => 42211,
-            OMLCodeReason::NotFound(_) => 40411,
-            OMLCodeReason::Uvs(_) => 50011,
+            OMLCodeReason::Syntax(_) => plan::parse::oml::SYNTAX,
+            OMLCodeReason::NotFound(_) => plan::parse::oml::NOT_FOUND,
+            OMLCodeReason::Uvs(_) => plan::parse::oml::UVS,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "parse.oml"
+        plan::parse::oml::TAG
     }
 }
 
 impl SysErrorCode for DataErrKind {
     fn sys_code(&self) -> u16 {
         match self {
-            DataErrKind::FormatError(_, _) => 42212,
-            DataErrKind::NotComplete => 42213,
-            DataErrKind::UnParse(_) => 40412,
-            DataErrKind::LessData => 42214,
-            DataErrKind::EmptyData => 42215,
-            DataErrKind::LessStc(_) => 42216,
-            DataErrKind::LessDef(_) => 42217,
+            DataErrKind::FormatError(_, _) => plan::parse::data::FORMAT_ERROR,
+            DataErrKind::NotComplete => plan::parse::data::NOT_COMPLETE,
+            DataErrKind::UnParse(_) => plan::parse::data::UNPARSE,
+            DataErrKind::LessData => plan::parse::data::LESS_DATA,
+            DataErrKind::EmptyData => plan::parse::data::EMPTY_DATA,
+            DataErrKind::LessStc(_) => plan::parse::data::LESS_STC,
+            DataErrKind::LessDef(_) => plan::parse::data::LESS_DEF,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "parse.data"
+        plan::parse::data::TAG
     }
 }
 
@@ -101,16 +201,16 @@ impl SysErrorCode for DataErrKind {
 impl SysErrorCode for SourceReason {
     fn sys_code(&self) -> u16 {
         match self {
-            SourceReason::NotData => 20401,
-            SourceReason::EOF => 20402,
-            SourceReason::SupplierError(_) => 50201,
-            SourceReason::Disconnect(_) => 49901,
-            SourceReason::Other(_) => 50209,
-            SourceReason::Uvs(_) => 50021,
+            SourceReason::NotData => plan::source::NOT_DATA,
+            SourceReason::EOF => plan::source::EOF,
+            SourceReason::SupplierError(_) => plan::source::SUPPLIER_ERROR,
+            SourceReason::Disconnect(_) => plan::source::DISCONNECT,
+            SourceReason::Other(_) => plan::source::OTHER,
+            SourceReason::Uvs(_) => plan::source::UVS,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "source"
+        plan::source::TAG
     }
 }
 
@@ -118,14 +218,14 @@ impl SysErrorCode for SourceReason {
 impl SysErrorCode for SinkReason {
     fn sys_code(&self) -> u16 {
         match self {
-            SinkReason::Sink(_) => 50211,
-            SinkReason::Mock => 50312,
-            SinkReason::StgCtrl => 50311,
-            SinkReason::Uvs(_) => 50031,
+            SinkReason::Sink(_) => plan::dist::SINK_ERROR,
+            SinkReason::Mock => plan::dist::MOCK,
+            SinkReason::StgCtrl => plan::dist::STG_CTRL,
+            SinkReason::Uvs(_) => plan::dist::UVS,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "dist"
+        plan::dist::TAG
     }
 }
 
@@ -133,12 +233,12 @@ impl SysErrorCode for SinkReason {
 impl SysErrorCode for KnowledgeReason {
     fn sys_code(&self) -> u16 {
         match self {
-            KnowledgeReason::Uvs(_) => 50041,
-            KnowledgeReason::NotData => 50042,
+            KnowledgeReason::Uvs(_) => plan::knowledge::UVS,
+            KnowledgeReason::NotData => plan::knowledge::NOT_DATA,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "knowledge"
+        plan::knowledge::TAG
     }
 }
 
@@ -147,18 +247,18 @@ use crate::run_error::{DistFocus, RunReason as RR, SourceFocus};
 impl SysErrorCode for RR {
     fn sys_code(&self) -> u16 {
         match self {
-            RR::Dist(DistFocus::SinkError(_)) => 50211,
-            RR::Dist(DistFocus::StgCtrl) => 50311,
-            RR::Source(SourceFocus::NoData) => 20401,
-            RR::Source(SourceFocus::Eof) => 20402,
-            RR::Source(SourceFocus::SupplierError(_)) => 50201,
-            RR::Source(SourceFocus::Other(_)) => 50209,
-            RR::Source(SourceFocus::Disconnect(_)) => 49901,
-            RR::Uvs(_) => 50041,
+            RR::Dist(DistFocus::SinkError(_)) => plan::run::dist::SINK_ERROR,
+            RR::Dist(DistFocus::StgCtrl) => plan::run::dist::STG_CTRL,
+            RR::Source(SourceFocus::NoData) => plan::run::source::NOT_DATA,
+            RR::Source(SourceFocus::Eof) => plan::run::source::EOF,
+            RR::Source(SourceFocus::SupplierError(_)) => plan::run::source::SUPPLIER_ERROR,
+            RR::Source(SourceFocus::Other(_)) => plan::run::source::OTHER,
+            RR::Source(SourceFocus::Disconnect(_)) => plan::run::source::DISCONNECT,
+            RR::Uvs(_) => plan::run::UVS,
         }
     }
     fn sys_tag(&self) -> &'static str {
-        "run"
+        plan::run::TAG
     }
 }
 
