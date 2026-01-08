@@ -2,6 +2,7 @@ use crate::parse_error::OMLCodeReason;
 use crate::{ConfReason, config_error::ConfCore};
 use derive_more::From;
 use orion_error::{ConfErrReason, ErrorCode, StructError, UvsConfFrom, UvsReason};
+use orion_sec::OrionSecReason;
 use serde::Serialize;
 use thiserror::Error;
 
@@ -54,6 +55,17 @@ impl From<ConfReason<ConfCore>> for RunReason {
 impl From<OMLCodeReason> for RunReason {
     fn from(value: OMLCodeReason) -> Self {
         Self::Uvs(UvsReason::from_conf(value.to_string()))
+    }
+}
+
+impl From<OrionSecReason> for RunReason {
+    fn from(value: OrionSecReason) -> Self {
+        match value {
+            OrionSecReason::Sec(sec_reason) => {
+                Self::Uvs(UvsReason::from_conf(sec_reason.to_string()))
+            }
+            OrionSecReason::Uvs(uvs_reason) => Self::Uvs(uvs_reason),
+        }
     }
 }
 
