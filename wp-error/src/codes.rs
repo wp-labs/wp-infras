@@ -8,6 +8,7 @@ pub trait SysErrorCode {
     }
 }
 
+use orion_sec::OrionSecReason;
 use wp_connector_api::{SinkReason, SourceReason};
 
 // ----------------- Config -----------------
@@ -57,6 +58,14 @@ impl SysErrorCode for ConfReason<ConfDynamic> {
     }
 }
 
+impl SysErrorCode for OrionSecReason {
+    fn sys_code(&self) -> u16 {
+        match self {
+            OrionSecReason::Sec(_) => 60001,
+            OrionSecReason::Uvs(_) => 50003,
+        }
+    }
+}
 // ----------------- Parse / OML -----------------
 impl SysErrorCode for OMLCodeReason {
     fn sys_code(&self) -> u16 {
