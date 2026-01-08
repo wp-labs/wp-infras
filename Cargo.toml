@@ -10,7 +10,7 @@ resolver = "2"
 
 [workspace.package]
 # Shared package metadata inherited by members via `*.workspace = true`
-version = "0.7.0"
+version = "0.7.1"
 edition = "2024"
 license = "Elv2"
 authors = ["WarpParse Dev Team"]
