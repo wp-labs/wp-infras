@@ -108,6 +108,7 @@ pub trait SysErrorCode {
     }
 }
 
+use orion_error::ErrorCode;
 use orion_sec::OrionSecReason;
 use wp_connector_api::{SinkReason, SourceReason};
 
