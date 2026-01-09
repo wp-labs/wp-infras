@@ -11,4 +11,4 @@ name = "wp_data_fmt"
 serde = { workspace = true }
 serde_json = { workspace = true }
 chrono = { workspace = true }
-wp_model_core ={ workspace = true }
+wp-model-core ={ workspace = true }

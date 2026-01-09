@@ -22,4 +22,4 @@ thiserror = { workspace = true }
 serde_json = { workspace = true }
 chrono = { workspace = true }
 #wp_parse_api = { workspace = true }
-wp_connector_api = { workspace = true }
+wp-connector-api = { workspace = true }
