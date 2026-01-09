@@ -141,15 +141,16 @@ fn test_conf_std_operation_try_load() {
             .as_nanos()
     );
 
+    let dict = EnvDict::default();
     let missing = tmp_dir.join(format!("{}_missing.toml", unique));
     assert!(matches!(
-        FileBackedConf::try_load(missing.to_str().unwrap()),
+        FileBackedConf::try_load(missing.to_str().unwrap(), &dict),
         Ok(None)
     ));
 
     let valid = tmp_dir.join(format!("{}_valid.toml", unique));
     std::fs::write(&valid, "ok").unwrap();
-    let loaded = FileBackedConf::try_load(valid.to_str().unwrap()).unwrap();
+    let loaded = FileBackedConf::try_load(valid.to_str().unwrap(), &dict).unwrap();
     assert_eq!(
         loaded,
         Some(FileBackedConf {
@@ -159,7 +160,7 @@ fn test_conf_std_operation_try_load() {
 
     let invalid = tmp_dir.join(format!("{}_invalid.toml", unique));
     std::fs::write(&invalid, "boom").unwrap();
-    let err = FileBackedConf::try_load(invalid.to_str().unwrap()).unwrap_err();
+    let err = FileBackedConf::try_load(invalid.to_str().unwrap(), &dict).unwrap_err();
     assert!(err.to_string().contains("invalid content"));
 
     let _ = std::fs::remove_file(valid);
