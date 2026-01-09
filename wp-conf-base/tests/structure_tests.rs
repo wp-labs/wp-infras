@@ -1,4 +1,5 @@
 use orion_conf::error::{ConfIOReason, StructError};
+use orion_variate::{EnvDict, EnvEvalable};
 use serde::Deserialize;
 use std::str::FromStr;
 use wp_conf_base::structure::ConfStdOperation;
@@ -104,10 +105,11 @@ fn test_conf_std_operation_try_load() {
     }
 
     impl ConfStdOperation for FileBackedConf {
-        fn load(path: &str) -> orion_conf::error::OrionConfResult<Self> {
-            let raw = std::fs::read_to_string(path).map_err(|err| {
+        fn load(path: &str, dict: &EnvDict) -> orion_conf::error::OrionConfResult<Self> {
+            let mut raw = std::fs::read_to_string(path).map_err(|err| {
                 StructError::from(ConfIOReason::Other(format!("io error: {}", err)))
             })?;
+            raw = raw.env_eval(dict);
             match raw.trim() {
                 "ok" => Ok(FileBackedConf {
                     marker: "ok".to_string(),

@@ -1,3 +1,4 @@
+use orion_variate::EnvDict;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
@@ -44,12 +45,12 @@ impl Display for Protocol {
 
 /// 统一的配置对象操作接口
 pub trait ConfStdOperation {
-    fn try_load(path: &str) -> OrionConfResult<Option<Self>>
+    fn try_load(path: &str, dict: &EnvDict) -> OrionConfResult<Option<Self>>
     where
         Self: Sized,
     {
         if std::path::Path::new(path).exists() {
-            match Self::load(path) {
+            match Self::load(path, dict) {
                 Ok(conf) => Ok(Some(conf)),
                 Err(e) => {
                     log::warn!("load conf error: {}", e);
@@ -61,7 +62,7 @@ pub trait ConfStdOperation {
         }
     }
 
-    fn load(path: &str) -> OrionConfResult<Self>
+    fn load(path: &str, dict: &EnvDict) -> OrionConfResult<Self>
     where
         Self: Sized;
     fn init(path: &str) -> OrionConfResult<Self>
