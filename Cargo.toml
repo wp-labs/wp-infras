@@ -10,7 +10,7 @@ resolver = "2"
 
 [workspace.package]
 # Shared package metadata inherited by members via `*.workspace = true`
-version = "0.7.1"
+version = "0.7.2"
 edition = "2024"
 license = "Elv2"
 authors = ["WarpParse Dev Team"]
@@ -23,8 +23,8 @@ toml = "0.9"
 orion-error = "0.5"
 orion-variate= "0.10"
 orion-sec = "0.3"
-orion_conf =  { version = "0.3", features = ["toml"]}
-winnow = "~0.7"
+orion_conf =  { version = "0.4", features = ["toml"]}
+winnow = "0.7"
 derive_more = "2.1"
 wp_connector_api = { package = "wp-connector-api",  git = "https://github.com/wp-labs/wp-open-api", tag = "v0.7.0" }
 wp_model_core    = { package = "wp-model-core",     git = "https://github.com/wp-labs/wp-open-api", tag = "v0.7.0" }

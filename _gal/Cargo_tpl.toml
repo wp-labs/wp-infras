@@ -23,8 +23,8 @@ toml = "0.9"
 orion-error = "0.5"
 orion-variate= "0.10"
 orion-sec = "0.3"
-orion_conf =  { version = "0.3", features = ["toml"]}
-winnow = "~0.7"
+orion_conf =  { version = "0.4", features = ["toml"]}
+winnow = "0.7"
 derive_more = "2.1"
 wp_connector_api = { package = "wp-connector-api",  git = "{{GIT_REPO_SVR}}/wp-open-api", {{GIT_REF}} = "{{OPEN_API_VER}}" }
 wp_model_core    = { package = "wp-model-core",     git = "{{GIT_REPO_SVR}}/wp-open-api", {{GIT_REF}} = "{{OPEN_API_VER}}" }
